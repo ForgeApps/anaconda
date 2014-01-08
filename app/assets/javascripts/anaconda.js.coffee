@@ -5,22 +5,23 @@ class @AnacondaUploader
   @video_types = /(\.|\/)(mp[e]?g|mov|avi|mp4|m4v)$/i
   @image_types = /(\.|\/)(jp[e]?g|png|bmp)$/i
   @resource_types = /(\.|\/)(pdf|ppt[x]?|doc[x]?)$/i
-  
-  
+
+
   constructor: (options = {}) ->
     @limits = options.limits ? {}
     @allowed_types = options.allowed_types ? []
     @upload_details_container = $("##{options.upload_details_container}") ? $("#files")
     @upload_button = $("##{options.upload_button_id}") ? $("#upload")
     @upload_complete_post_url = options.upload_complete_post_url ? null
+    @upload_complete_form_to_fill = options.upload_complete_form_to_fill ? null
     @resource = options.resource ? null
     @attribute = options.attribute ? null
-    
+
     @files_for_upload = []
     @base_key = $("#fileupload").data("base-key")
     @setup_fileupload()
     @setup_upload_button_handler()
-    
+
   setup_fileupload: ->
     self = this
     $('#fileupload').fileupload
@@ -47,13 +48,13 @@ class @AnacondaUploader
 
     $(document).bind 'drop dragover', (e) ->
       e.preventDefault()
-      
+
   setup_upload_button_handler: ->
     self = this
     @upload_button.off("click").click (e) ->
       e.preventDefault()
       self.upload_files()
-  
+
   files_by_type: (type) ->
     matches = []
     for v,i in @files_for_upload
@@ -66,17 +67,17 @@ class @AnacondaUploader
     for v,i in @files_for_upload
       $("input#key").val "#{@base_key}/${filename}"
       v.submit()
-  
+
   is_allowed_type: (upload_file) ->
     if 0 == @allowed_types.length || 0 <= @allowed_types.indexOf upload_file.media_type
       return true
     return false
-    
+
   is_within_limits: (upload_file) ->
     if !@limits[upload_file.media_type]? || @limits[upload_file.media_type] > @files_by_type(upload_file.media_type).length
       return true
     return false
-    
+
   add_file: (data) ->
     upload_file = new AnacondaUploadFile data
     if @is_allowed_type(upload_file)
@@ -91,7 +92,9 @@ class @AnacondaUploader
   file_completed_upload: (data) ->
     upload_file = data.context
     DLog "#{upload_file.file.name} completed uploading"
-    if @upload_complete_post_url?
+    if @upload_complete_post_url? && @upload_complete_post_url != ""
+      DLog "will now post to #{@upload_complete_post_url}"
+
       file_data = {}
       file_data[@resource] = {}
       file_data[@resource]["#{@attribute}_file_path"] = "#{@base_key}/#{upload_file.file.name}"
@@ -108,26 +111,36 @@ class @AnacondaUploader
           DLog data
         #TODO: handle a failure on this POST
       })
-      
-      
+
+    if @upload_complete_form_to_fill? && @upload_complete_form_to_fill != ""
+      DLog "will now fill form #{@upload_complete_form_to_fill}"
+
+      DLog "#{@resource}_#{@attribute}_file_path"
+
+      $( @upload_complete_form_to_fill + ' ' + '#' + "#{@resource}_#{@attribute}_file_path" ).val( "#{@base_key}/#{upload_file.file.name}" )
+      $( @upload_complete_form_to_fill + ' ' + '#' + "#{@resource}_#{@attribute}_filename" ).val( upload_file.file.name )
+      $( @upload_complete_form_to_fill + ' ' + '#' + "#{@resource}_#{@attribute}_size" ).val( upload_file.file.size )
+      $( @upload_complete_form_to_fill + ' ' + '#' + "#{@resource}_#{@attribute}_type" ).val( upload_file.file.media_type )
+
+
 class @AnacondaUploadFile
-  
+
   constructor: (@data) ->
     @file = @data.files[0]
     @media_type = @get_media_type()
     @id = @get_id()
-    
+
     @set_context()
   get_id: ->
     hex_md5( "#{@file.name} #{@file.size}" )
   get_media_type: ->
-    if Uploader.audio_types.test(@file.type) || Uploader.audio_types.test(@file.name)
+    if AnacondaUploader.audio_types.test(@file.type) || AnacondaUploader.audio_types.test(@file.name)
       media_type = "audio"
-    else if Uploader.video_types.test(@file.type) || Uploader.video_types.test(@file.name)
+    else if AnacondaUploader.video_types.test(@file.type) || AnacondaUploader.video_types.test(@file.name)
       media_type = "video"
-    else if Uploader.image_types.test(@file.type) || Uploader.image_types.test(@file.name)
+    else if AnacondaUploader.image_types.test(@file.type) || AnacondaUploader.image_types.test(@file.name)
       media_type = "image"
-    else if Uploader.resource_types.test(@file.type) || Uploader.resource_types.test(@file.name)
+    else if AnacondaUploader.resource_types.test(@file.type) || AnacondaUploader.resource_types.test(@file.name)
       media_type = "resource"
     else
       media_type = "unknown"
