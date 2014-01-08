@@ -78,6 +78,10 @@ class @AnacondaUploader
       return true
     return false
 
+  reset: ->
+    @files_for_upload = []
+    @upload_details_container.html ''
+
   add_file: (data) ->
     upload_file = new AnacondaUploadFile data
     if @is_allowed_type(upload_file)
@@ -92,6 +96,8 @@ class @AnacondaUploader
   file_completed_upload: (data) ->
     upload_file = data.context
     DLog "#{upload_file.file.name} completed uploading"
+    DLog upload_file
+
     if @upload_complete_post_url? && @upload_complete_post_url != ""
       DLog "will now post to #{@upload_complete_post_url}"
 
@@ -120,7 +126,7 @@ class @AnacondaUploader
       $( @upload_complete_form_to_fill + ' ' + '#' + "#{@resource}_#{@attribute}_file_path" ).val( "#{@base_key}/#{upload_file.file.name}" )
       $( @upload_complete_form_to_fill + ' ' + '#' + "#{@resource}_#{@attribute}_filename" ).val( upload_file.file.name )
       $( @upload_complete_form_to_fill + ' ' + '#' + "#{@resource}_#{@attribute}_size" ).val( upload_file.file.size )
-      $( @upload_complete_form_to_fill + ' ' + '#' + "#{@resource}_#{@attribute}_type" ).val( upload_file.file.media_type )
+      $( @upload_complete_form_to_fill + ' ' + '#' + "#{@resource}_#{@attribute}_type" ).val( upload_file.file.type )
 
 
 class @AnacondaUploadFile
