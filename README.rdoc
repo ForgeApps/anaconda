@@ -17,3 +17,17 @@ Description goes here.
 Copyright (c) 2014 Ben McFadden. See LICENSE.txt for
 further details.
 
+
+
+
+Columns we're expecting (in the case of `anaconda_for :image`)
+image_file_path
+image_size
+image_original_filename
+
+Magic Columns we'll make
+image_url
+
+
+You'll have to make and run a migration for the columns you want:
+`rails g migration AddAnacondaToUsers image_file_path:text image_size:integer image_original_filename:text`

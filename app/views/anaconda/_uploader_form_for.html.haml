@@ -1,0 +1,27 @@
+= anaconda_uploader_form options
+
+%button#upload Upload
+
+%strong Files:
+#files
+
+:javascript
+  (function() {
+    jQuery(function() {
+      return window.uploader = new AnacondaUploader({
+        limits: {
+          audio: 1,
+          video: 1,
+          resource: 1,
+          image: 1
+        },
+        allowed_types: ["image"],
+        upload_details_container: "files",
+        upload_button_id: "upload",
+        upload_complete_post_url: "#{options[:form_options][:post_url]}",
+        resource: "#{resource.class.to_s.downcase}",
+        attribute: "#{options[:as]}"
+      });
+    });
+  
+  }).call(this);
