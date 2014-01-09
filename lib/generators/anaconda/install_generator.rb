@@ -1,12 +1,13 @@
 require 'rails/generators'
 
 module Anaconda
-  class InstallGenerator < ::Rails::Generators::Base
-    desc "Copy Anaconda default files"
+  class MigrationGenerator < ::Rails::Generators::NamedBase
+    desc "Create a migration for the given model name"
     source_root File.expand_path('../templates', __FILE__)
 
-    def copy_config
-      template "config/initializers/anaconda.rb"
+    def create_migration_file
+      puts "Received #{file_name} as the named base"
+      # template "config/initializers/anaconda.rb"
     end
   end
 end
