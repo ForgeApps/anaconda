@@ -78,6 +78,8 @@ We highly recommend the `figaro` gem [https://github.com/laserlemon/figaro](http
 
 *  Migrations
 
+        $ rails g migration anaconda:migration PostMedia asset
+
 *  Model setup
 
         class PostMedia < ActiveRecord::Base
