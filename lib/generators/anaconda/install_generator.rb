@@ -1,8 +1,7 @@
 require 'rails/generators'
-require 'rails/generators/named_base'
 
 module Anaconda
-  class InstallGenerator < ::Rails::Generators::NamedBase
+  class InstallGenerator < ::Rails::Generators::Base
     desc "Copy Anaconda default files"
     source_root File.expand_path('../templates', __FILE__)
 
