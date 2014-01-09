@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = "anaconda"
-  s.version = "0.0.2"
+  s.version     = Anaconda::Rails::VERSION
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Ben McFadden", "Jeff McFadden"]
