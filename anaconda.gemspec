@@ -5,23 +5,22 @@
 
 Gem::Specification.new do |s|
   s.name = "anaconda"
-  s.version = "0.0.1"
+  s.version = "0.0.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["Ben McFadden"]
+  s.authors = ["Ben McFadden", "Jeff McFadden"]
   s.date = "2014-01-07"
   s.description = "Dead simple file uploading to S3"
   s.email = "ben@forgeapps.com"
   s.extra_rdoc_files = [
-    "LICENSE.txt",
-    "README.rdoc"
+    "LICENSE.txt"
   ]
   s.files = [
     ".document",
     "Gemfile",
     "Gemfile.lock",
     "LICENSE.txt",
-    "README.rdoc",
+    "README.markdown",
     "Rakefile",
     "VERSION",
     "app/assets/javascripts/anaconda.js.coffee",
