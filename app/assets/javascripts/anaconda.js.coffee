@@ -14,6 +14,7 @@ class @AnacondaUploader
     @upload_button = $("##{options.upload_button_id}") ? $("#upload")
     @upload_complete_post_url = options.upload_complete_post_url ? null
     @upload_complete_form_to_fill = options.upload_complete_form_to_fill ? null
+    @upload_automatically = options.upload_automatically ? false
     @resource = options.resource ? null
     @attribute = options.attribute ? null
 
@@ -89,6 +90,10 @@ class @AnacondaUploader
         @files_for_upload.push upload_file
         DLog(upload_file)
         @upload_details_container.append "<div id='upload_file_#{upload_file.id}' class='upload-file #{upload_file.media_type}'><span class='file-name'>#{upload_file.file.name}</span><span class='size'>#{upload_file.file.size}</span><span class='progress-percent'></span><div class='progress'><span class='progress-bar'></span></div></div>"
+
+        if @upload_automatically
+          upload_file.submit()
+
       else
         alert "Only #{@limits[upload_file.media_type]} #{upload_file.media_type} files are allowed"
     else
