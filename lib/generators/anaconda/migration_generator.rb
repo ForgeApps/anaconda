@@ -8,8 +8,6 @@ module Anaconda
     argument :field_name, :type => :string, :default => "asset"
 
     def create_migration_file
-      puts "Would create migration file for #{file_name} #{plural_name} #{plural_name.singularize}"
-      puts "field_name: #{field_name}"
       create_file "db/migrate/#{Time.now.strftime('%Y%m%d%H%M%S')}_anaconda_migration_for_#{file_name}.rb", <<-FILE
 class AnacondaMigrationFor#{file_name.titlecase} < ActiveRecord::Migration
   def change
