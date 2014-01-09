@@ -1,3 +1,4 @@
+require 'rails'
 require 'anaconda/anaconda'
 require 'anaconda/anaconda_for'
 require 'anaconda/railtie'
@@ -9,6 +10,7 @@ ActiveSupport.on_load(:active_record) do
 end
 
 module Anaconda
+  mattr_accessor :aws
   @@aws = {
     aws_access_key: "",
     aws_secret_key: "",
