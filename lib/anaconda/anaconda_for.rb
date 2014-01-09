@@ -17,9 +17,9 @@ module Anaconda
 
         class_attribute :anaconda_options
         self.anaconda_options = options.reverse_merge(
-          aws_access_key_id: Anaconda.AWS[:aws_access_key],
-          aws_secret_access_key: Anaconda.AWS[:aws_secret_key],
-          bucket: Anaconda.AWS[:aws_bucket],
+          aws_access_key_id: Anaconda.aws[:aws_access_key],
+          aws_secret_access_key: Anaconda.aws[:aws_secret_key],
+          bucket: Anaconda.aws[:aws_bucket],
           acl: "public-read",
           max_file_size: 500.megabytes,
           base_key: "#{self.to_s.pluralize.downcase}/#{anaconda_columns.first.to_s.pluralize}/#{(0...32).map{(65+rand(26)).chr}.join.downcase}"
@@ -50,10 +50,10 @@ module Anaconda
       private
       def magic_url(column_name)
         if send("#{column_name}_stored_privately")
-          aws = Fog::Storage.new({:provider => 'AWS', :aws_access_key_id => Anaconda.AWS[:aws_access_key], :aws_secret_access_key => Anaconda.AWS[:aws_secret_key]})
-          aws.get_object_https_url(Anaconda.AWS[:aws_bucket], send("#{column_name}_file_path"), 1.hour.from_now)
+          aws = Fog::Storage.new({:provider => 'AWS', :aws_access_key_id => Anaconda.aws[:aws_access_key], :aws_secret_access_key => Anaconda.aws[:aws_secret_key]})
+          aws.get_object_https_url(Anaconda.aws[:aws_bucket], send("#{column_name}_file_path"), 1.hour.from_now)
         else
-          "https://s3.amazonaws.com/#{Anaconda.AWS[:aws_bucket]}/#{send("#{column_name}_file_path")}"
+          "https://s3.amazonaws.com/#{Anaconda.aws[:aws_bucket]}/#{send("#{column_name}_file_path")}"
         end
       end
     end
