@@ -10,20 +10,94 @@ If you require stability before that time, you are strongly encouraged to specif
 
 ## Installation
 
-Add to your `Gemfile`
+1.  Add to your `Gemfile`
 
-    gem 'anaconda'
+        gem 'anaconda'
 
-Then `bundle install`
+2.  `bundle install`
 
-* Asset updates
-* AWS setup
+3.  Add the following to your `application.js`
+
+        //= require anaconda
+
+4.  Finally, run the installer to install the configuration initializer into `config/initializers/anaconda.rb`
+
+        $ rails g anaconda:install
+
+## Configuration
+
+### AWS S3 Setup
+
+### AWS S3 Setup
+
+#### IAM
+
+Sample IAM Policy (be sure to replace 'your.bucketname'):
+
+    {
+        "Statement": [
+	            {
+                "Effect": "Allow",
+                "Action": "s3:*",
+                "Resource": [
+                    "arn:aws:s3:::[your.bucketname]",
+                    "arn:aws:s3:::[your.bucketname]/*"
+	                ]
+	            }
+	        ]
+	    }
+
+#### CORS
+
+Sample CORS configuration:
+
+    <?xml version="1.0" encoding="UTF-8"?>
+	 <CORSConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
+	    <CORSRule>
+	        <AllowedOrigin>*</AllowedOrigin>
+	        <AllowedMethod>GET</AllowedMethod>
+	        <AllowedMethod>POST</AllowedMethod>
+	        <AllowedMethod>PUT</AllowedMethod>
+	        <MaxAgeSeconds>3000</MaxAgeSeconds>
+	        <AllowedHeader>*</AllowedHeader>
+	    </CORSRule>
+	 </CORSConfiguration>
+
+
+### Initializer
+
+The initializer installed into `config/initializers/anaconda.rb` contains the settings you need to get anaconda working.
+
+**You must set these to your S3 credentials/settings in order for anaconda to work.**
+
+We highly recommend the `figaro` gem [https://github.com/laserlemon/figaro](https://github.com/laserlemon/figaro) to manage your environment variables in development and production.
 
 ## Usage
 
-* Controller changes (if any)
-* Form setup
-* Options
+*  Controller changes (if any)
+
+*  Model setup
+
+        class PostMedia < ActiveRecord::Base
+          belongs_to :post
+
+          anaconda_for :asset, base_key: :asset_key
+
+          def asset_key
+			  o = [('a'..'z'), ('A'..'Z')].map { |i| i.to_a }.flatten
+			  s = (0...24).map { o[rand(o.length)] }.join
+			  "post_media/#{s}"
+			end
+
+
+
+*  Form setup
+
+        #anaconda_upload_form_wrapper
+        = anaconda_uploader_form_for post_media, :asset, form_el: '#new_post_media', limits: { images: 9999 }, auto_upload: true
+
+
+*  Options
 
 ## Contributing to anaconda
 
