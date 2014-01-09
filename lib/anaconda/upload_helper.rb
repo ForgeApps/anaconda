@@ -20,9 +20,9 @@ module Anaconda
       def initialize(options)
         @options = options.reverse_merge(
           id: "fileupload",
-          aws_access_key_id: AWS[:aws_access_key],
-          aws_secret_access_key: AWS[:aws_secret_key],
-          bucket: AWS[:aws_bucket],
+          aws_access_key_id: Anaconda.AWS[:aws_access_key],
+          aws_secret_access_key: Anaconda.AWS[:aws_secret_key],
+          bucket: Anaconda.AWS[:aws_bucket],
           acl: "public-read",
           expiration: 10.hours.from_now,
           max_file_size: 500.megabytes,
@@ -57,11 +57,11 @@ module Anaconda
       def key
         @key ||= "#{base_key}/${filename}"
       end
-      
+
       def base_key
         @options[:base_key]
       end
-    
+
       def url
         "https://s3.amazonaws.com/#{@options[:bucket]}/"
       end
