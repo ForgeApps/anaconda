@@ -1,9 +1,32 @@
-= anaconda
+# anaconda
 
-Description goes here.
+Dead simple direct-to-s3 file uploading for your rails app.
 
-== Contributing to anaconda
- 
+## Alpha Warning
+
+We intend to follow semantic versioning as of 1.0. Before that time breaking changes may occur, as development is very active.
+
+If you require stability before that time, you are strongly encouraged to specify an exact version in your `Gemfile` to avoid updating to a version that breaks things for you.
+
+## Installation
+
+Add to your `Gemfile`
+
+    gem 'anaconda'
+
+Then `bundle install`
+
+* Asset updates
+* AWS setup
+
+## Usage
+
+* Controller changes (if any)
+* Form setup
+* Options
+
+## Contributing to anaconda
+
 * Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet.
 * Check out the issue tracker to make sure someone already hasn't requested it and/or contributed it.
 * Fork the project.
@@ -12,9 +35,9 @@ Description goes here.
 * Make sure to add tests for it. This is important so I don't break it in a future version unintentionally.
 * Please try not to mess with the Rakefile, version, or history. If you want to have your own version, or is otherwise necessary, that is fine, but please isolate to its own commit so I can cherry-pick around it.
 
-== Copyright
+## Copyright
 
-Copyright (c) 2014 Ben McFadden. See LICENSE.txt for
+Copyright (c) 2014 Forge Apps, LLC. See LICENSE.txt for
 further details.
 
 
