@@ -1,5 +1,6 @@
 require 'rails/railtie'
 require 'anaconda/upload_helper'
+require 'anaconda/form_builder_helpers'
 
 module Anaconda
   class Railtie < ::Rails::Railtie
