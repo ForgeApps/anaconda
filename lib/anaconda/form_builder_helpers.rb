@@ -1,7 +1,7 @@
 module Anaconda
   module FormBuilderHelpers
 
-    def anaconda_form_fields( anaconda_field_name )
+    def anaconda( anaconda_field_name )
       output = ""
 
       output += self.hidden_field "#{anaconda_field_name}_filename".to_sym
