@@ -56,11 +56,12 @@ class @AnacondaUploader
       e.preventDefault()
 
   setup_upload_button_handler: ->
+    #alert( "setup_upload_button_handler for #{@element_id}" )
     unless @upload_automatically
       $(@element_id).closest( 'form' ).on( 'submit', { self: this }, this.form_submit_handler )
 
   form_submit_handler: (e) ->
-    DLog( 'form_submit_handler' )
+    # alert( 'form_submit_handler' )
     e.preventDefault()
     self = e.data.self
     $(this).off( 'submit', self.form_submit_handler )
