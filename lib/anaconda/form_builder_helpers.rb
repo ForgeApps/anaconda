@@ -48,7 +48,7 @@ module Anaconda
         },
         element_id: "##{options[:element_id]}",
         base_key: "#{options[:base_key]}",
-        allowed_types: ["image"],
+        allowed_types: [],
         upload_details_container: "files",
         upload_button_id: "upload",
         upload_complete_post_url: "#{options[:form_options][:post_url]}",

@@ -57,7 +57,8 @@ class @AnacondaUploader
 
   setup_upload_button_handler: ->
     #alert( "setup_upload_button_handler for #{@element_id}" )
-    unless @upload_automatically
+    unless ( @upload_automatically == true )
+      DLog( "Setting up submit handler for element #{@element_id}")
       $(@element_id).closest( 'form' ).on( 'submit', { self: this }, this.form_submit_handler )
 
   form_submit_handler: (e) ->
@@ -104,7 +105,8 @@ class @AnacondaUploader
         DLog(upload_file)
         @upload_details_container.append "<div id='upload_file_#{upload_file.id}' class='upload-file #{upload_file.media_type}'><span class='file-name'>#{upload_file.file.name}</span><span class='size'>#{upload_file.file.size}</span><span class='progress-percent'></span><div class='progress'><span class='progress-bar'></span></div></div>"
 
-        if @upload_automatically
+        if @upload_automatically == true
+          DLog( "Upload Automatically: #{@upload_automatically}")
           upload_file.submit()
         else
           @setup_upload_button_handler()
@@ -146,7 +148,7 @@ class @AnacondaUploader
     $( @element_id ).siblings( '#' + "#{@resource}_#{@attribute}_size" ).val( upload_file.file.size )
     $( @element_id ).siblings( '#' + "#{@resource}_#{@attribute}_type" ).val( upload_file.file.type )
 
-    $( @element_id ).closest( 'form' ).submit() unless @upload_automatically
+    $( @element_id ).closest( 'form' ).submit() unless ( @upload_automatically == true )
 
 class @AnacondaUploadFile
 
