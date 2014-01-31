@@ -27,41 +27,40 @@ If you require stability before that time, you are strongly encouraged to specif
 ## Configuration
 
 ### AWS S3 Setup
-
-### AWS S3 Setup
+Create a bucket where you want your uploads to go. If you already have a bucket in place, you can certainly use it.
 
 #### IAM
-
-Sample IAM Policy (be sure to replace 'your.bucketname'):
+For best security we recommend creating a user in IAM that will just be used for file uploading. Once you create that user you can apply a security policy to it so they can only access the specified resources. Here is an example IAM policy that will restrict this user to only have access to the one bucket specified (be sure to replace 'your.bucketname'). Be sure to generate security credentials for this user. These are the S3 credentials you will use.
 
     {
-        "Statement": [
-	            {
-                "Effect": "Allow",
-                "Action": "s3:*",
-                "Resource": [
-                    "arn:aws:s3:::[your.bucketname]",
-                    "arn:aws:s3:::[your.bucketname]/*"
-	                ]
-	            }
-	        ]
-	    }
+      "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": "s3:*",
+              "Resource": [
+                  "arn:aws:s3:::[your.bucketname]",
+                  "arn:aws:s3:::[your.bucketname]/*"
+                ]
+            }
+        ]
+    }
 
 #### CORS
+You will need to set up CORS permissions on the bucket so users can upload to it from your website. Below is a sample CORS configuration.
 
-Sample CORS configuration:
+If users will only upload from one domain, you can put that in your AllowedOrigin. If they will upload from multiple domains you may either add an AllowedOrigin for each of them, or use a wildcard `*` origin as in our example below.
 
     <?xml version="1.0" encoding="UTF-8"?>
-	 <CORSConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
-	    <CORSRule>
-	        <AllowedOrigin>*</AllowedOrigin>
-	        <AllowedMethod>GET</AllowedMethod>
-	        <AllowedMethod>POST</AllowedMethod>
-	        <AllowedMethod>PUT</AllowedMethod>
-	        <MaxAgeSeconds>3000</MaxAgeSeconds>
-	        <AllowedHeader>*</AllowedHeader>
-	    </CORSRule>
-	 </CORSConfiguration>
+      <CORSConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
+      <CORSRule>
+        <AllowedOrigin>*</AllowedOrigin>
+        <AllowedMethod>GET</AllowedMethod>
+        <AllowedMethod>POST</AllowedMethod>
+        <AllowedMethod>PUT</AllowedMethod>
+        <MaxAgeSeconds>3000</MaxAgeSeconds>
+        <AllowedHeader>*</AllowedHeader>
+      </CORSRule>
+    </CORSConfiguration>
 
 
 ### Initializer
@@ -74,9 +73,23 @@ We highly recommend the `figaro` gem [https://github.com/laserlemon/figaro](http
 
 ## Usage
 
-*  Controller changes (if any)
+*  Controller changes
+  	
+  	You must add these parameters to your permitted parameters. In Rails 4 this is done via strong parameters in the controller. In Rails 3 this is done in the model via attr_accessible.
+
+  	For each `anaconda_for` (assuming `anaconda_for :asset`):
+  	
+  	* :asset_filename
+  	* :asset_file_path
+  	* :asset_size
+    * :asset_original_filename
+    * :asset_stored_privately
+    * :asset_type
+
 
 *  Migrations
+	
+	We provide a migration generator. Assuming `anaconda_for :asset` inside of PostMedia model:
 
         $ rails g migration anaconda:migration PostMedia asset
 
@@ -97,17 +110,36 @@ We highly recommend the `figaro` gem [https://github.com/laserlemon/figaro](http
 
 *  Form setup
 
-        #anaconda_upload_form_wrapper
-        = anaconda_uploader_form_for post_media, :asset, form_el: '#new_post_media', limits: { images: 9999 }, auto_upload: true
+	At this time we only support anaconda fields inside of a [simple_form](https://github.com/plataformatec/simple_form). We plan to expand and add a rails form helper in the future.
+	
+		= simple_form_for post_media do |f|
+			= f.anaconda :asset
+			= f.name
+			= f.other_field
+			= f.submit
 
-
-*  Options
+*  Fields
+	
+	At this point you will have these methods available on a post_media instance:
+  	* :asset_filename
+  	* :asset_file_path
+  	* :asset_size
+    * :asset_original_filename
+    * :asset_stored_privately
+    * :asset_type
+    * :asset_url
+    
+    The magic method is asset_url which will return a signed S3 URL if the file is stored with an ACL of `private` and will return a non-signed URL if the file is stored with public access.
 
 ## Changelog
 
-0.2.0 - Add support for multiple `anaconda_for` calls per model. Currently limited to one per form, however.
-0.2.0 - Improve migration generation file and class naming to include field name
-0.2.0 - `instance.field_url` will now return nil if the file_path is nil
+* 0.2.0
+	
+	* Add support for multiple `anaconda_for` calls per model. Currently limited to one per form, however.
+
+	* Improve migration generation file and class naming to include field name
+
+	* `post_media.asset_url` will now return nil if the file_path is nil
 
 
 ## Contributing to anaconda
@@ -124,18 +156,3 @@ We highly recommend the `figaro` gem [https://github.com/laserlemon/figaro](http
 
 Copyright (c) 2014 Forge Apps, LLC. See LICENSE.txt for
 further details.
-
-
-
-
-Columns we're expecting (in the case of `anaconda_for :image`)
-image_file_path
-image_size
-image_original_filename
-
-Magic Columns we'll make
-image_url
-
-
-You'll have to make and run a migration for the columns you want:
-`rails g migration AddAnacondaToUsers image_file_path:text image_size:integer image_original_filename:text`
