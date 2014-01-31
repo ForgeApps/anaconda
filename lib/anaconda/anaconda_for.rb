@@ -35,6 +35,7 @@ module Anaconda
           bucket: Anaconda.aws[:aws_bucket],
           acl: "public-read",
           max_file_size: 500.megabytes,
+          allowed_file_types: [],
           base_key: "#{self.to_s.pluralize.downcase}/#{anaconda_column.to_s.pluralize}/#{(0...32).map{(65+rand(26)).chr}.join.downcase}"
         )
       end

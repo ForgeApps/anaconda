@@ -11,11 +11,18 @@ ActiveSupport.on_load(:active_record) do
 end
 
 module Anaconda
-  mattr_accessor :aws
+  mattr_accessor :aws, :file_types
   @@aws = {
     aws_access_key: "",
     aws_secret_key: "",
     aws_bucket:     ""
+  }
+  
+  @@file_types = {
+    audio:    /(\.|\/)(wav|mp3|m4a|aiff|ogg|flac)$/i,
+    video:    /(\.|\/)(mp[e]?g|mov|avi|mp4|m4v)$/i,
+    image:    /(\.|\/)(jp[e]?g|png|bmp)$/i,
+    resource: /(\.|\/)(pdf|ppt[x]?|doc[x]?|xls[x]?)$/i,
   }
 
   # Default way to setup Anaconda. Run rails generate anaconda:install
