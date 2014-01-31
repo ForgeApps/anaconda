@@ -8,15 +8,15 @@ module Anaconda
     argument :field_name, :type => :string, :default => "asset"
 
     def create_migration_file
-      destination = "db/migrate/#{Time.now.strftime('%Y%m%d%H%M%S')}_anaconda_migration_for_#{file_name}.rb"
-      migration_name = "AnacondaMigrationFor#{file_name.titlecase}"
+      destination = "db/migrate/#{Time.now.strftime('%Y%m%d%H%M%S')}_anaconda_migration_for_#{file_name}_#{field_name}.rb"
+      migration_name = "AnacondaMigrationFor#{file_name.titlecase}#{field_name.titlecase}"
       count = nil
       i = 1
-      while !Dir.glob("db/migrate/*_anaconda_migration_for_#{file_name}#{count}.rb").empty?
+      while !Dir.glob("db/migrate/*_anaconda_migration_for_#{file_name}_#{field_name}#{count}.rb").empty?
         i += 1
         count = "_#{i}"
-        destination = "db/migrate/#{Time.now.strftime('%Y%m%d%H%M%S')}_anaconda_migration_for_#{file_name}#{count}.rb"
-        migration_name = "AnacondaMigrationFor#{file_name.titlecase}#{i}"
+        destination = "db/migrate/#{Time.now.strftime('%Y%m%d%H%M%S')}_anaconda_migration_for_#{file_name}_#{field_name}#{count}.rb"
+        migration_name = "AnacondaMigrationFor#{file_name.titlecase}#{field_name.titlecase}#{i}"
       end
       create_file destination, <<-FILE
 class #{migration_name} < ActiveRecord::Migration
