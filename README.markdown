@@ -103,6 +103,13 @@ We highly recommend the `figaro` gem [https://github.com/laserlemon/figaro](http
 
 *  Options
 
+## Changelog
+
+0.2.0 - Add support for multiple `anaconda_for` calls per model. Currently limited to one per form, however.
+0.2.0 - Improve migration generation file and class naming to include field name
+0.2.0 - `instance.field_url` will now return nil if the file_path is nil
+
+
 ## Contributing to anaconda
 
 * Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet.
