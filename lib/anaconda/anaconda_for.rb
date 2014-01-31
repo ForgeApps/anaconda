@@ -7,22 +7,35 @@ module Anaconda
 
     module ClassMethods
 
-      def anaconda_for( anaconda_columns, options = {})
+      def anaconda_for( anaconda_column, options = {})
         send :include, InstanceMethods
-
-        anaconda_columns = [anaconda_columns] if anaconda_columns.kind_of?(Symbol) || anaconda_columns.kind_of?(String)
-        class_attribute :anaconda_columns
-        self.anaconda_columns = anaconda_columns.collect{ |c| c.to_sym }
+        
+        begin
+          self.anaconda_columns.present?
+        rescue NoMethodError
+          class_attribute :anaconda_columns
+        end
+        self.anaconda_columns = Array.new unless self.anaconda_columns.kind_of? Array
+        if self.anaconda_columns.include? anaconda_column.to_sym
+          raise AnacondaError, "anaconda_for cannot be called multiple times for the same field"
+        end
+        self.anaconda_columns << anaconda_column.to_sym
         # Class.anaconda_columns is now an array of symbols
 
-        class_attribute :anaconda_options
-        self.anaconda_options = options.reverse_merge(
+        class_attribute 
+        begin
+          self.anaconda_options.present?
+        rescue NoMethodError
+          class_attribute :anaconda_options
+        end
+        self.anaconda_options = Hash.new unless self.anaconda_options.kind_of? Hash
+        self.anaconda_options[anaconda_column.to_sym] = options.reverse_merge(
           aws_access_key_id: Anaconda.aws[:aws_access_key],
           aws_secret_access_key: Anaconda.aws[:aws_secret_key],
           bucket: Anaconda.aws[:aws_bucket],
           acl: "public-read",
           max_file_size: 500.megabytes,
-          base_key: "#{self.to_s.pluralize.downcase}/#{anaconda_columns.first.to_s.pluralize}/#{(0...32).map{(65+rand(26)).chr}.join.downcase}"
+          base_key: "#{self.to_s.pluralize.downcase}/#{anaconda_column.to_s.pluralize}/#{(0...32).map{(65+rand(26)).chr}.join.downcase}"
         )
       end
     end
@@ -49,7 +62,7 @@ module Anaconda
 
       private
       def magic_url(column_name)
-        nil unless send("#{column_name}_file_path").present?
+        return nil unless send("#{column_name}_file_path").present?
 
         if send("#{column_name}_stored_privately")
           aws = Fog::Storage.new({:provider => 'AWS', :aws_access_key_id => Anaconda.aws[:aws_access_key], :aws_secret_access_key => Anaconda.aws[:aws_secret_key]})

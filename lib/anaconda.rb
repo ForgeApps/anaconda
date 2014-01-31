@@ -1,5 +1,6 @@
 require 'rails'
 require 'anaconda/anaconda'
+require 'anaconda/errors'
 require 'anaconda/anaconda_for'
 require 'anaconda/railtie'
 require 'anaconda/engine'

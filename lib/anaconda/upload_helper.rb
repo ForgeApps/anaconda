@@ -1,9 +1,13 @@
 module Anaconda
-  # Vastly inspired by http://railscasts.com/episodes/383-uploading-to-amazon-s3
+  # Greatly inspired by http://railscasts.com/episodes/383-uploading-to-amazon-s3
   module UploadHelper
     def anaconda_uploader_form_for(instance, attribute, form_options = {})
       a_class = instance.class unless instance.kind_of? Class
-      options = a_class.anaconda_options.dup
+      if a_class.anaconda_options[attribute].present
+        options = a_class.anaconda_options[attribute].dup
+      else
+        raise AnacondaError, "attribute options not set for column #{attribute}. Did you add `anaconda_for :#{attribute}` to the model?"
+      end
       options[:base_key] = instance.send(options[:base_key].to_s) if options[:base_key].kind_of? Symbol
       render(:template =>"anaconda/_uploader_form_for.html.haml", :locals => {resource: instance, options: options.merge(as: attribute, form_options: form_options)}, layout: false).to_s
     end

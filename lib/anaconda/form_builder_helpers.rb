@@ -12,9 +12,13 @@ module Anaconda
         instance = self.object
         a_class = self.object.class unless self.object.kind_of? Class
 
-        options = a_class.anaconda_options.dup
+        begin
+          options = a_class.anaconda_options[anaconda_field_name.to_sym].dup
+        rescue
+          raise AnacondaError, "attribute options not set for column #{anaconda_field_name}. Did you add `anaconda_for :#{anaconda_field_name}` to the model?"
+        end
         options[:base_key] = instance.send(options[:base_key].to_s) if options[:base_key].kind_of? Symbol
-
+        
         uploader = S3Uploader.new(options)
 
         output += self.input_field "file", name: "file", id: element_id, as: :file, "data-url" => uploader.url, "data-form-data" => uploader.fields.to_json
