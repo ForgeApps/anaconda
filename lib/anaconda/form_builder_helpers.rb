@@ -43,16 +43,10 @@ module Anaconda
 <script>
   (function() {
     jQuery(function() {
-      return window.uploader = new AnacondaUploader({
-        limits: {
-          audio: 1,
-          video: 1,
-          resource: 1,
-          image: 1
-        },
+      return window.uploader = new AnacondaUploadField({
         element_id: "##{options[:element_id]}",
         base_key: "#{options[:base_key]}",
-        allowed_types: [],
+        allowed_types: #{options[:allowed_file_types]},
         upload_details_container: "files",
         upload_button_id: "upload",
         upload_complete_post_url: "#{options[:form_options][:post_url]}",

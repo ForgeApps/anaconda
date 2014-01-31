@@ -1,15 +1,19 @@
-class @AnacondaUploader
+class @AnacondaUploadManager
+  @deubg_enabled: false
+  @uploads_started: false
+
+  constructor: (options = {}) ->
+    @form_fields = []
+  register_upload_field: ->
+    DLog "Registering Upload Field"
+  
+
+class @AnacondaUploadField
   @debug_enabled: false
   @upload_started: false
-  @audio_types = /(\.|\/)(wav|mp3|m4a|aiff|ogg|flac)$/i
-  @video_types = /(\.|\/)(mp[e]?g|mov|avi|mp4|m4v)$/i
-  @image_types = /(\.|\/)(jp[e]?g|png|bmp)$/i
-  @resource_types = /(\.|\/)(pdf|ppt[x]?|doc[x]?)$/i
-
 
   constructor: (options = {}) ->
     @element_id = options.element_id ? ""
-    @limits = options.limits ? {}
     @allowed_types = options.allowed_types ? []
     @upload_details_container = $("##{options.upload_details_container}") ? $("#files")
     @upload_button = $("##{options.upload_button_id}") ? $("#upload")
@@ -21,8 +25,23 @@ class @AnacondaUploader
 
     @files_for_upload = []
     @base_key = options.base_key ? ""
+    
+    @register_with_upload_manager()
+    
     @setup_fileupload()
 
+  register_with_upload_manager: ->
+    if (@closest_form().length == 0 || @closest_form().attr('id') == 'undefined')
+      throw "Anaconda Error: form element not found or missing id attribtue."
+    if (typeof( window.anacondaUploadManagers ) == "undefined")
+      window.anacondaUploadManagers = []
+    if (typeof( window.anacondaUploadManagers[@closest_form().attr('id')] ) == "undefined")
+      window.anacondaUploadManagers[@closest_form().attr('id')] = new AnacondaUploadManager()
+    @upload_manager().register_upload_field(this)  
+  upload_manager: ->
+    window.anacondaUploadManagers[@closest_form().attr('id')]
+  closest_form: ->
+    $(@element_id).closest("form")
   setup_fileupload: ->
     self = this
     $( @element_id ).fileupload
