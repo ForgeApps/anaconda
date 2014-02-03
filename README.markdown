@@ -117,6 +117,14 @@ We highly recommend the `figaro` gem [https://github.com/laserlemon/figaro](http
 			= f.name
 			= f.other_field
 			= f.submit
+			
+	**Form helper options**
+	
+	There are a variety of options available on the form helper. At this time they are:
+	
+	* `upload_details_container` - An element id you would like the upload details located in. Defaults to `<resource>_<attribtue>_details`  ex: `post_media_asset_details`
+	* `auto_upload` - If set to true, upload will begin as soon as a file is selected. Default: *false*
+	* `auto_submit` - If set to true, form will submit automatically when upload is completed. Useful when mixed with `auto_upload: true`, especially if the file field is the only field on the form. Default: *true* when auto_upload is false; *false* when auto_upload is true.
 
 *  Fields
 	
