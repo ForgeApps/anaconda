@@ -149,7 +149,18 @@ We highly recommend the `figaro` gem [https://github.com/laserlemon/figaro](http
 
 	* `post_media.asset_url` will now return nil if the file_path is nil
 
+* 0.9.0
 
+  * Add support for multiple anaconda uploaders per form
+  
+  * Completely refactor JavaScript file to support multiple uploaders
+  
+  * Add auto_submit option
+  
+  * Fix support for allowed_types
+  
+  * Add file_types to anaconda config
+  
 ## Contributing to anaconda
 
 * Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet.
