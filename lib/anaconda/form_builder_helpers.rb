@@ -21,7 +21,7 @@ module Anaconda
         
         uploader = S3Uploader.new(options)
 
-        output += self.input_field "file", name: "file", id: element_id, as: :file, "data-url" => uploader.url, "data-form-data" => uploader.fields.to_json
+        output += self.input_field "file", name: "file", id: element_id, as: :file, data: {url: uploader.url, form_data: uploader.fields.to_json, media_types: Anaconda.js_file_types}
       end
 
       output += self.hidden_field "#{anaconda_field_name}_filename".to_sym
@@ -36,9 +36,7 @@ module Anaconda
       options = options.merge(as: anaconda_field_name, form_options: form_options, element_id: element_id )
 
       output += <<-END
-<strong>Files:</strong>
-
-<div id="files"></div>
+<div id="#{instance.class.to_s.underscore}_#{anaconda_field_name}_details"></div>
 
 <script>
   (function() {
@@ -47,7 +45,7 @@ module Anaconda
         element_id: "##{options[:element_id]}",
         base_key: "#{options[:base_key]}",
         allowed_types: #{options[:allowed_file_types]},
-        upload_details_container: "files",
+        upload_details_container: "#{options[:form_options][:upload_details_container]}",
         upload_button_id: "upload",
         upload_complete_post_url: "#{options[:form_options][:post_url]}",
         upload_complete_form_to_fill: "#{options[:form_options][:form_el]}",

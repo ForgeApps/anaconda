@@ -19,15 +19,34 @@ module Anaconda
   }
   
   @@file_types = {
-    audio:    /(\.|\/)(wav|mp3|m4a|aiff|ogg|flac)$/i,
-    video:    /(\.|\/)(mp[e]?g|mov|avi|mp4|m4v)$/i,
-    image:    /(\.|\/)(jp[e]?g|png|bmp)$/i,
-    resource: /(\.|\/)(pdf|ppt[x]?|doc[x]?|xls[x]?)$/i,
+    audio:    /(\.|\/)(wav|mp3|m4a|aiff|ogg|flac)$/,
+    video:    /(\.|\/)(mp[e]?g|mov|avi|mp4|m4v)$/,
+    image:    /(\.|\/)(jp[e]?g|png|bmp)$/,
+    resource: /(\.|\/)(pdf|ppt[x]?|doc[x]?|xls[x]?)$/,
   }
 
   # Default way to setup Anaconda. Run rails generate anaconda:install
   # to create a fresh initializer with all configuration values.
   def self.config
     yield self
+  end
+  
+  def self.js_file_types
+    # http://stackoverflow.com/questions/4854714/how-to-translate-ruby-regex-to-javascript-i-mx-and-rails-3-0-3
+    js_file_types = {}
+    file_types.each do |group_name, regexp|
+      str = regexp.inspect.
+              sub('\\A' , '^').
+              sub('\\Z' , '$').
+              sub('\\z' , '$').
+              sub(/^\// , '').
+              sub(/\/[a-z]*$/ , '').
+              gsub(/\(\?#.+\)/ , '').
+              gsub(/\(\?-\w+:/ , '(').
+              gsub(/\s/ , '')
+        regexp_str = Regexp.new(str).source
+      js_file_types[group_name.to_s] = regexp_str
+    end
+    return js_file_types
   end
 end

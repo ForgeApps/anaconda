@@ -6,9 +6,9 @@ Anaconda.config do |config|
     aws_bucket:     ENV["AWS_BUCKET"]     || nil
   }
   config.file_types = {
-    audio:    /(\.|\/)(wav|mp3|m4a|aiff|ogg|flac)$/i,
-    video:    /(\.|\/)(mp[e]?g|mov|avi|mp4|m4v)$/i,
-    image:    /(\.|\/)(jp[e]?g|png|bmp)$/i,
-    resource: /(\.|\/)(pdf|ppt[x]?|doc[x]?|xls[x]?)$/i,
+    audio:    /(\.|\/)(wav|mp3|m4a|aiff|ogg|flac)$/,
+    video:    /(\.|\/)(mp[e]?g|mov|avi|mp4|m4v)$/,
+    image:    /(\.|\/)(jp[e]?g|png|bmp)$/,
+    resource: /(\.|\/)(pdf|ppt[x]?|doc[x]?|xls[x]?)$/,
   }
 end
