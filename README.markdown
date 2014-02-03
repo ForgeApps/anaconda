@@ -141,13 +141,9 @@ We highly recommend the `figaro` gem [https://github.com/laserlemon/figaro](http
 
 ## Changelog
 
-* 0.2.0
-	
-	* Add support for multiple `anaconda_for` calls per model. Currently limited to one per form, however.
-
-	* Improve migration generation file and class naming to include field name
-
-	* `post_media.asset_url` will now return nil if the file_path is nil
+* 0.9.1
+  
+  * Fix for anaconda:migration when the field name has an underscore in it
 
 * 0.9.0
 
@@ -160,6 +156,16 @@ We highly recommend the `figaro` gem [https://github.com/laserlemon/figaro](http
   * Fix support for allowed_types
   
   * Add file_types to anaconda config
+  
+  * Add fix for sites using Turbolinks
+
+* 0.2.0
+	
+	* Add support for multiple `anaconda_for` calls per model. Currently limited to one per form, however.
+
+	* Improve migration generation file and class naming to include field name
+
+	* `post_media.asset_url` will now return nil if the file_path is nil
   
 ## Contributing to anaconda
 
