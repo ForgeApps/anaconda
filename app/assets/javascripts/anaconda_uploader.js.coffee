@@ -144,7 +144,11 @@ class @AnacondaUploadField
       @upload_in_progress = true
       @upload_manager().uploads_started = true
       @upload_manager().disable_submit_button()
+      @hide_file_field()
 
+  hide_file_field: ->
+    $(@element_id).hide()
+  
   is_allowed_type: (file_obj) ->
     
     if 0 == @allowed_types.length || 0 <= @allowed_types.indexOf @get_media_type(file_obj)
