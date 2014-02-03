@@ -1,6 +1,6 @@
 # Three possible configurations:
 # Upload automatically and submit form when upload is complete
-# Upload automatically but do not submit form automatically
+# Done: Upload automatically but do not submit form automatically
 # Done: Do not upload until submit is pressed. The upload and submit form when uploading is complete.
 class @AnacondaUploadManager
   @deubg_enabled: false
@@ -11,7 +11,8 @@ class @AnacondaUploadManager
     DLog options
     @form = $("##{options.form_id}")
     @upload_automatically = false
-    @setup_upload_button_handler()
+    @submit_automatically = false
+    @setup_form_submit_handler()
     
   register_upload_field: (anaconda_upload_field)->
     DLog "Registering Upload Field"
@@ -19,8 +20,11 @@ class @AnacondaUploadManager
     if anaconda_upload_field.upload_automatically
       # If _any_ of them have an auto upload, we want to know
       @upload_automatically = true
-  
-  setup_upload_button_handler: ->
+    if anaconda_upload_field.submit_automatically
+      # If _any_ of them have auto submit enabled, we will submit automatically
+      @submit_automatically = true
+      
+  setup_form_submit_handler: ->
     #alert( "setup_upload_button_handler for #{@element_id}" )
     unless ( @upload_automatically == true )
       DLog( "Setting up submit handler for form #{@form.attr('id')}")
@@ -51,7 +55,8 @@ class @AnacondaUploadManager
       @all_uploads_completed()
       
   all_uploads_completed: ->
-    @form.submit() unless ( @upload_automatically == true )
+    if !@upload_automatically || @submit_automatically
+      @form.submit()
 
 class @AnacondaUploadField
   @debug_enabled: false
@@ -70,11 +75,8 @@ class @AnacondaUploadField
     else
       @upload_details_container = $("##{@resource}_#{@attribute}_details")
     @upload_button = $("##{options.upload_button_id}") ? $("#upload")
-    @upload_complete_post_url = options.upload_complete_post_url ? null
-    @upload_complete_form_to_fill = options.upload_complete_form_to_fill ? null
     @upload_automatically = options.upload_automatically ? false
-    DLog "upload automatically:"
-    DLog @upload_automatically
+    @submit_automatically = options.submit_automatically ? false
     @file = null
     @file_data = null
     @media_types = $(@element_id).data('media-types')
@@ -171,7 +173,6 @@ class @AnacondaUploadField
         @upload()
       else
         DLog "Not auto upload"
-        #@setup_upload_button_handler()
     else
       alert "#{data.files[0].name} is a #{@get_media_type(data.files[0])} file. Only #{@allowed_types.join(", ")} files are allowed."
   get_id: ->

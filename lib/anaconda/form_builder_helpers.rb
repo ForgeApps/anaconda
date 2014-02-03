@@ -46,10 +46,8 @@ module Anaconda
         base_key: "#{options[:base_key]}",
         allowed_types: #{options[:allowed_file_types].collect{ |i| i.to_s }},
         upload_details_container: "#{options[:form_options][:upload_details_container]}",
-        upload_button_id: "upload",
-        upload_complete_post_url: "#{options[:form_options][:post_url]}",
-        upload_complete_form_to_fill: "#{options[:form_options][:form_el]}",
         upload_automatically: "#{options[:form_options][:auto_upload]}",
+        submit_automatically: "#{options[:form_options][:auto_submit]}",
         resource: "#{instance.class.to_s.underscore}",
         attribute: "#{options[:as]}"
       });
