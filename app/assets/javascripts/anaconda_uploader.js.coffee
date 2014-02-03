@@ -3,9 +3,6 @@
 # Done: Upload automatically but do not submit form automatically
 # Done: Do not upload until submit is pressed. The upload and submit form when uploading is complete.
 class @AnacondaUploadManager
-  @deubg_enabled: false
-  @uploads_started: false
-
   constructor: (options = {}) ->
     @anaconda_upload_fields = []
     DLog options
@@ -25,16 +22,13 @@ class @AnacondaUploadManager
       @submit_automatically = true
       
   setup_form_submit_handler: ->
-    #alert( "setup_upload_button_handler for #{@element_id}" )
-    unless ( @upload_automatically == true )
-      DLog( "Setting up submit handler for form #{@form.attr('id')}")
-      @form.on( 'submit', { self: this }, this.form_submit_handler )
+    DLog( "Setting up submit handler for form #{@form.attr('id')}")
+    @form.on( 'submit', { self: this }, this.form_submit_handler )
 
   form_submit_handler: (e) ->
-    # alert( 'form_submit_handler' )
-    return if @upload_automatically
-    e.preventDefault()
     self = e.data.self
+    return if self.upload_automatically
+    e.preventDefault()
     $(this).off( 'submit', self.form_submit_handler )
 
     for upload_field, i in self.anaconda_upload_fields
@@ -57,12 +51,18 @@ class @AnacondaUploadManager
   all_uploads_completed: ->
     if !@upload_automatically || @submit_automatically
       @form.submit()
+    else
+      @enable_submit_button()  
+      
+  disable_submit_button: ->
+    @form.find("input[type='submit']").prop( "disabled", true );
+  enable_submit_button: ->
+    @form.find("input[type='submit']").prop( "disabled", false );
 
-class @AnacondaUploadField
-  @debug_enabled: false
-  @upload_in_progress: false
-
+class @AnacondaUploadField  
   constructor: (options = {}) ->
+    @upload_in_progress = false
+    @upload_completed = false
     DLog "options:"
     DLog options
     @element_id = options.element_id ? ""
@@ -80,6 +80,7 @@ class @AnacondaUploadField
     @file = null
     @file_data = null
     @media_types = $(@element_id).data('media-types')
+    
     
     @base_key = options.base_key ? ""
     @key = options.key ? "#{@base_key}/${filename}"
@@ -136,11 +137,13 @@ class @AnacondaUploadField
       e.preventDefault()
 
   upload: ->
+    return if @upload_completed
     if @file != null && @file_data != null
       $("input#key").val @key
       @file_data.submit()
       @upload_in_progress = true
-      @upload_manager.uploads_started = true
+      @upload_manager().uploads_started = true
+      @upload_manager().disable_submit_button()
 
   is_allowed_type: (file_obj) ->
     
@@ -227,6 +230,7 @@ class @AnacondaUploadField
     $( @element_id ).siblings( '#' + "#{@resource}_#{@attribute}_type" ).val( @file.type )
 
     @upload_in_progress = false;
+    @upload_completed = true;
     @upload_manager().upload_completed()
 
 
