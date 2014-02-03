@@ -10,6 +10,10 @@ class @AnacondaUploadManager
     @upload_automatically = false
     @submit_automatically = false
     @setup_form_submit_handler()
+    self = this
+    $(document).on "page:fetch", ->
+      DLog "page:fetch"
+      self.reset()
     
   register_upload_field: (anaconda_upload_field)->
     DLog "Registering Upload Field"
@@ -35,9 +39,9 @@ class @AnacondaUploadManager
       upload_field.upload()
     false
   reset: ->
-    @anaconda_upload_fields = []
     for upload_field, i in @anaconda_upload_fields
       upload_field.reset()
+    @anaconda_upload_fields = []
       
   upload_completed: ->
     all_completed = true
