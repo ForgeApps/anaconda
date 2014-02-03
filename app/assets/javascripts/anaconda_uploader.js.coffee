@@ -1,7 +1,7 @@
 # Three possible configurations:
 # Upload automatically and submit form when upload is complete
 # Upload automatically but do not submit form automatically
-# Do not upload until submit is pressed. The upload and submit form when uploading is complete.
+# Done: Do not upload until submit is pressed. The upload and submit form when uploading is complete.
 class @AnacondaUploadManager
   @deubg_enabled: false
   @uploads_started: false
@@ -10,11 +10,15 @@ class @AnacondaUploadManager
     @anaconda_upload_fields = []
     DLog options
     @form = $("##{options.form_id}")
+    @upload_automatically = false
     @setup_upload_button_handler()
     
   register_upload_field: (anaconda_upload_field)->
     DLog "Registering Upload Field"
     @anaconda_upload_fields.push anaconda_upload_field
+    if anaconda_upload_field.upload_automatically
+      # If _any_ of them have an auto upload, we want to know
+      @upload_automatically = true
   
   setup_upload_button_handler: ->
     #alert( "setup_upload_button_handler for #{@element_id}" )
@@ -35,14 +39,27 @@ class @AnacondaUploadManager
     @anaconda_upload_fields = []
     for upload_field, i in @anaconda_upload_fields
       upload_field.reset()
+      
+  upload_completed: ->
+    all_completed = true
+    for upload_field, i in @anaconda_upload_fields
+      if upload_field.upload_in_progress
+        all_completed = false
+        break
+    if all_completed
+      @all_uploads_completed()
+      
+  all_uploads_completed: ->
+    @form.submit() unless ( @upload_automatically == true )
 
 class @AnacondaUploadField
   @debug_enabled: false
-  @upload_started: false
+  @upload_in_progress: false
 
   constructor: (options = {}) ->
     @element_id = options.element_id ? ""
     @allowed_types = options.allowed_types ? []
+    DLog @allowed_types
     @resource = options.resource
     @attribute = options.attribute
     if options.upload_details_container != null && options.upload_details_container != ""
@@ -58,6 +75,7 @@ class @AnacondaUploadField
     @media_types = $(@element_id).data('media-types')
     
     @base_key = options.base_key ? ""
+    @key = options.key ? "#{@base_key}/${filename}"
     
     @register_with_upload_manager()
     
@@ -112,19 +130,22 @@ class @AnacondaUploadField
 
   upload: ->
     if @file != null && @file_data != null
-      $("input#key").val "#{@base_key}/${filename}"
+      $("input#key").val @key
       @file_data.submit()
+      @upload_in_progress = true
+      @upload_manager.uploads_started = true
 
   is_allowed_type: (file_obj) ->
     
-    if 0 == @allowed_types.length || 0 <= @allowed_types.indexOf get_media_type(file_obj)
+    if 0 == @allowed_types.length || 0 <= @allowed_types.indexOf @get_media_type(file_obj)
       return true
     return false
   
   get_media_type: (file_obj) ->
     media_type = "unknown"
-    for k,v in @media_types
-      regexp = RegExp.new(k, "i")
+    DLog "get_media_type"
+    for k,v of @media_types
+      regexp = new RegExp(v, "i")
       if regexp.test(file_obj.type) || regexp.test(file_obj.name)
         media_type = k
     return media_type
@@ -146,7 +167,7 @@ class @AnacondaUploadField
       else
         #@setup_upload_button_handler()
     else
-      alert "#{@file.name} is a #{@get_media_type(@file)} file. Only #{@allowed_types.join(", ")} files are allowed."
+      alert "#{data.files[0].name} is a #{@get_media_type(data.files[0])} file. Only #{@allowed_types.join(", ")} files are allowed."
   get_id: ->
     hex_md5( "#{@file.name} #{@file.size}" )
   
@@ -189,16 +210,17 @@ class @AnacondaUploadField
     #     #TODO: handle a failure on this POST
     #   })
 
-    DLog "will now fill form #{@upload_complete_form_to_fill}"
+    # DLog "will now fill form #{@upload_complete_form_to_fill}"
 
     DLog "#{@resource}_#{@attribute}_file_path"
 
-    $( @element_id ).siblings( '#' + "#{@resource}_#{@attribute}_file_path" ).val( "#{@base_key}/#{upload_file.file.name}" )
-    $( @element_id ).siblings( '#' + "#{@resource}_#{@attribute}_filename" ).val( upload_file.file.name )
-    $( @element_id ).siblings( '#' + "#{@resource}_#{@attribute}_size" ).val( upload_file.file.size )
-    $( @element_id ).siblings( '#' + "#{@resource}_#{@attribute}_type" ).val( upload_file.file.type )
+    $( @element_id ).siblings( '#' + "#{@resource}_#{@attribute}_file_path" ).val( @key.replace("${filename}", @file.name) )
+    $( @element_id ).siblings( '#' + "#{@resource}_#{@attribute}_filename" ).val( @file.name )
+    $( @element_id ).siblings( '#' + "#{@resource}_#{@attribute}_size" ).val( @file.size )
+    $( @element_id ).siblings( '#' + "#{@resource}_#{@attribute}_type" ).val( @file.type )
 
-    # TODO: Don't submit unless _all_ uploads are completed
+    @upload_in_progress = false;
+    @upload_manager().upload_completed()
     # $( @element_id ).closest( 'form' ).submit() unless ( @upload_automatically == true )
 
 
