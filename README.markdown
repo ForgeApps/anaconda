@@ -91,7 +91,7 @@ We highly recommend the `figaro` gem [https://github.com/laserlemon/figaro](http
 	
 	We provide a migration generator. Assuming `anaconda_for :asset` inside of PostMedia model:
 
-        $ rails g migration anaconda:migration PostMedia asset
+        $ rails g anaconda:migration PostMedia asset
 
 *  Model setup
 
