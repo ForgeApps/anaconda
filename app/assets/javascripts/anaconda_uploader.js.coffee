@@ -28,6 +28,7 @@ class @AnacondaUploadManager
 
   form_submit_handler: (e) ->
     # alert( 'form_submit_handler' )
+    return if @upload_automatically
     e.preventDefault()
     self = e.data.self
     $(this).off( 'submit', self.form_submit_handler )
@@ -57,6 +58,8 @@ class @AnacondaUploadField
   @upload_in_progress: false
 
   constructor: (options = {}) ->
+    DLog "options:"
+    DLog options
     @element_id = options.element_id ? ""
     @allowed_types = options.allowed_types ? []
     DLog @allowed_types
@@ -70,6 +73,8 @@ class @AnacondaUploadField
     @upload_complete_post_url = options.upload_complete_post_url ? null
     @upload_complete_form_to_fill = options.upload_complete_form_to_fill ? null
     @upload_automatically = options.upload_automatically ? false
+    DLog "upload automatically:"
+    DLog @upload_automatically
     @file = null
     @file_data = null
     @media_types = $(@element_id).data('media-types')
@@ -159,12 +164,13 @@ class @AnacondaUploadField
       @file = data.files[0]
       @file_data = data
       DLog @file
-      @upload_details_container.html "<div id='upload_file_#{@get_id}' class='upload-file #{@get_media_type(@file)}'><span class='file-name'>#{@file.name}</span><span class='size'>#{@readable_size()}</span><span class='progress-percent'></span><div class='progress'><span class='progress-bar'></span></div></div>"
+      @upload_details_container.html "<div id='upload_file_#{@get_id()}' class='upload-file #{@get_media_type(@file)}'><span class='file-name'>#{@file.name}</span><span class='size'>#{@readable_size()}</span><span class='progress-percent'></span><div class='progress'><span class='progress-bar'></span></div></div>"
 
-      if @upload_automatically == true
-        DLog( "Upload Automatically: #{@upload_automatically}")
-        upload_file.submit()
+      if @upload_automatically
+        DLog "auto upload"
+        @upload()
       else
+        DLog "Not auto upload"
         #@setup_upload_button_handler()
     else
       alert "#{data.files[0].name} is a #{@get_media_type(data.files[0])} file. Only #{@allowed_types.join(", ")} files are allowed."
@@ -221,7 +227,6 @@ class @AnacondaUploadField
 
     @upload_in_progress = false;
     @upload_manager().upload_completed()
-    # $( @element_id ).closest( 'form' ).submit() unless ( @upload_automatically == true )
 
 
 # class @AnacondaUploadFile
