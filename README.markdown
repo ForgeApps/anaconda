@@ -140,6 +140,8 @@ We highly recommend the `figaro` gem [https://github.com/laserlemon/figaro](http
     The magic method is asset_url which will return a signed S3 URL if the file is stored with an ACL of `private` and will return a non-signed URL if the file is stored with public access.
 
 ## Changelog
+* 0.9.2
+  * Always use UTC for policy expiration date, even if Time.zone is set to something else.
 
 * 0.9.1
   
