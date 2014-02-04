@@ -66,7 +66,7 @@ module Anaconda
           aws_secret_access_key: Anaconda.aws[:aws_secret_key],
           bucket: Anaconda.aws[:aws_bucket],
           acl: "public-read",
-          expiration: 10.hours.from_now,
+          expiration: 10.hours.from_now.utc,
           max_file_size: 500.megabytes,
           as: "file"
         )
