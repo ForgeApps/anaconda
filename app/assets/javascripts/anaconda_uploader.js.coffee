@@ -31,7 +31,7 @@ class @AnacondaUploadManager
 
   form_submit_handler: (e) ->
     self = e.data.self
-    return if self.upload_automatically
+    return true if self.upload_automatically || self.all_uploads_are_complete
     e.preventDefault()
     $(this).off( 'submit', self.form_submit_handler )
 
@@ -42,7 +42,15 @@ class @AnacondaUploadManager
     for upload_field, i in @anaconda_upload_fields
       upload_field.reset()
     @anaconda_upload_fields = []
-      
+  
+  all_uploads_are_complete: ->
+    all_completed = true
+    for upload_field, i in @anaconda_upload_fields
+      if upload_field.upload_in_progress
+        all_completed = false
+        break
+    return all_completed
+  
   upload_completed: ->
     all_completed = true
     for upload_field, i in @anaconda_upload_fields
