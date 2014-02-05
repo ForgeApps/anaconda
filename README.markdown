@@ -140,6 +140,9 @@ We highly recommend the `figaro` gem [https://github.com/laserlemon/figaro](http
     The magic method is asset_url which will return a signed S3 URL if the file is stored with an ACL of `private` and will return a non-signed URL if the file is stored with public access.
 
 ## Changelog
+* 0.9.4
+	* 	Fix uploads. Previous version broke them completely.
+	
 * 0.9.3
 	* If no files have been selected, let form submit as normal
 
