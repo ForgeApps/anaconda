@@ -94,18 +94,29 @@ We highly recommend the `figaro` gem [https://github.com/laserlemon/figaro](http
         $ rails g anaconda:migration PostMedia asset
 
 *  Model setup
-
-        class PostMedia < ActiveRecord::Base
-          belongs_to :post
-
-          anaconda_for :asset, base_key: :asset_key
-
-          def asset_key
-			  o = [('a'..'z'), ('A'..'Z')].map { |i| i.to_a }.flatten
-			  s = (0...24).map { o[rand(o.length)] }.join
-			  "post_media/#{s}"
-			end
-
+	
+		class PostMedia < ActiveRecord::Base
+		  belongs_to :post
+			
+		  anaconda_for :asset, base_key: :asset_key
+			
+		  def asset_key
+			o = [('a'..'z'), ('A'..'Z')].map { |i| i.to_a }.flatten
+			s = (0...24).map { o[rand(o.length)] }.join
+			"post_media/#{s}"
+		  end
+		end
+	
+	At this time the available options on anaconda_for are:
+	* `base_key` default: _%{plural model}/%{plural column}/%{random string}_
+	* `aws_access_key_id` default: _aws_access_key_ specified in Anaconda config
+	* `aws_secret_access_key` default: _aws_secret_key_ specified in Anaconda config
+	* `bucket` default: _aws_bucket_ specified in Anaconda config
+	* `acl` default _public-read_
+	* `max_file_size` default: `500.megabytes`
+	* `allowed_file_types` default: _all_
+	* `host` String. If specified, this will be used to access publically stored objects instead of the S3 bucket. Useful for CloudFront integration. Note: At this time privately stored objects will still be requested via S3. Default: _false_
+	* `protocol` `https`, `http`, or `:auto`. If `:auto`, `//` will be used as the protocol. Note: At this time, all privately stored objects are requested over https. Default: `http`
 
 
 *  Form setup
@@ -140,6 +151,9 @@ We highly recommend the `figaro` gem [https://github.com/laserlemon/figaro](http
     The magic method is asset_url which will return a signed S3 URL if the file is stored with an ACL of `private` and will return a non-signed URL if the file is stored with public access.
 
 ## Changelog
+* 0.9.5
+  * add `host` and `protocol` options to `anaconda_for`
+
 * 0.9.4
 	* 	Fix uploads. Previous version broke them completely.
 	
