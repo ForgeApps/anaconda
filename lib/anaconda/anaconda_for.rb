@@ -37,8 +37,8 @@ module Anaconda
           max_file_size: 500.megabytes,
           allowed_file_types: [],
           base_key: "#{self.to_s.pluralize.downcase}/#{anaconda_column.to_s.pluralize}/#{(0...32).map{(65+rand(26)).chr}.join.downcase}",
-          asset_host: false,
-          asset_protocol: "http"
+          host: false,
+          protocol: "http"
         )
       end
     end
@@ -70,19 +70,19 @@ module Anaconda
         if send("#{column_name}_stored_privately")
           aws = Fog::Storage.new({:provider => 'AWS', :aws_access_key_id => Anaconda.aws[:aws_access_key], :aws_secret_access_key => Anaconda.aws[:aws_secret_key]})
           aws.get_object_https_url(Anaconda.aws[:aws_bucket], send("#{column_name}_file_path"), 1.hour.from_now)
-        elsif self.anaconda_options[column_name.to_sym][:asset_host]
-          "#{anaconda_asset_protocol(column_name)}#{self.anaconda_options[column_name.to_sym][:asset_host]}/#{send("#{column_name}_file_path")}"
+        elsif self.anaconda_options[column_name.to_sym][:host]
+          "#{anaconda_protocol(column_name)}#{self.anaconda_options[column_name.to_sym][:host]}/#{send("#{column_name}_file_path")}"
         else
-          "#{anaconda_asset_protocol(column_name)}s3.amazonaws.com/#{Anaconda.aws[:aws_bucket]}/#{send("#{column_name}_file_path")}"
+          "#{anaconda_protocol(column_name)}s3.amazonaws.com/#{Anaconda.aws[:aws_bucket]}/#{send("#{column_name}_file_path")}"
         end
       end
       
-      def anaconda_asset_protocol(column_name)
-        case self.anaconda_options[column_name.to_sym][:asset_protocol]
+      def anaconda_protocol(column_name)
+        case self.anaconda_options[column_name.to_sym][:protocol]
         when :auto
           "//"
         else
-          "#{self.anaconda_options[column_name.to_sym][:asset_protocol]}://"
+          "#{self.anaconda_options[column_name.to_sym][:protocol]}://"
         end
       end
     end
