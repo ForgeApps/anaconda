@@ -151,6 +151,8 @@ We highly recommend the `figaro` gem [https://github.com/laserlemon/figaro](http
     The magic method is asset_url which will return a signed S3 URL if the file is stored with an ACL of `private` and will return a non-signed URL if the file is stored with public access.
 
 ## Changelog
+* 0.9.7
+  * Add percent sign to progress-percent div
 * 0.9.6
   * Fix `auto_upload` and `auto_submit` options.
   

@@ -209,7 +209,7 @@ class @AnacondaUploadField
     Math.max(fileSizeInBytes, 0.1).toFixed(1) + byteUnits[i];
   
   update_progress_to: (progress) ->
-    @upload_details_container.find(".progress-percent").html progress
+    @upload_details_container.find(".progress-percent").html progress + '%'
     @upload_details_container.find('.progress-bar').css('width', progress + '%')
   
   file_completed_upload: (data) ->
