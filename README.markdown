@@ -136,6 +136,7 @@ We highly recommend the `figaro` gem [https://github.com/laserlemon/figaro](http
 	* `upload_details_container` - An element id you would like the upload details located in. Defaults to `<resource>_<attribtue>_details`  ex: `post_media_asset_details`
 	* `auto_upload` - If set to true, upload will begin as soon as a file is selected. Default: *false*
 	* `auto_submit` - If set to true, form will submit automatically when upload is completed. Useful when mixed with `auto_upload: true`, especially if the file field is the only field on the form. Default: *true* when auto_upload is false; *false* when auto_upload is true.
+  * `base_key` - If supplied, this will be the base_key used for this upload
 
 *  Fields
 	
@@ -151,8 +152,13 @@ We highly recommend the `figaro` gem [https://github.com/laserlemon/figaro](http
     The magic method is asset_url which will return a signed S3 URL if the file is stored with an ACL of `private` and will return a non-signed URL if the file is stored with public access.
 
 ## Changelog
+* 0.9.8
+  * Add `base_key` option
+  * Change the way we identify hidden elements to work when we're using this in a nested form.
+  
 * 0.9.7
   * Add percent sign to progress-percent div
+  
 * 0.9.6
   * Fix `auto_upload` and `auto_submit` options.
   
