@@ -243,9 +243,9 @@ class @AnacondaUploadField
     hyphenated_attribute = @attribute.replace("_", "-")
     
     $( @element_id ).siblings( "input[data-#{hyphenated_resource}-#{hyphenated_attribute}-file-path]" ).val( @key.replace("${filename}", @file.name) )
-    $( @element_id ).siblings( "input[data#{hyphenated_resource}-#{hyphenated_attribute}-filename]" ).val( @file.name )
-    $( @element_id ).siblings( "input[data#{hyphenated_resource}-#{hyphenated_attribute}-size]" ).val( @file.size )
-    $( @element_id ).siblings( "input[data#{hyphenated_resource}-#{hyphenated_attribute}-type]" ).val( @file.type )
+    $( @element_id ).siblings( "input[data-#{hyphenated_resource}-#{hyphenated_attribute}-filename]" ).val( @file.name )
+    $( @element_id ).siblings( "input[data-#{hyphenated_resource}-#{hyphenated_attribute}-size]" ).val( @file.size )
+    $( @element_id ).siblings( "input[data-#{hyphenated_resource}-#{hyphenated_attribute}-type]" ).val( @file.type )
 
     @upload_in_progress = false;
     @upload_completed = true;

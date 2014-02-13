@@ -152,6 +152,8 @@ We highly recommend the `figaro` gem [https://github.com/laserlemon/figaro](http
     The magic method is asset_url which will return a signed S3 URL if the file is stored with an ACL of `private` and will return a non-signed URL if the file is stored with public access.
 
 ## Changelog
+* 0.9.9
+  * Fix bug untroduced in previous version
 * 0.9.8
   * Add `base_key` option
   * Change the way we identify hidden elements to work when we're using this in a nested form.
