@@ -239,11 +239,13 @@ class @AnacondaUploadField
     # DLog "will now fill form #{@upload_complete_form_to_fill}"
 
     DLog "#{@resource}_#{@attribute}_file_path"
-
-    $( @element_id ).siblings( '#' + "#{@resource}_#{@attribute}_file_path" ).val( @key.replace("${filename}", @file.name) )
-    $( @element_id ).siblings( '#' + "#{@resource}_#{@attribute}_filename" ).val( @file.name )
-    $( @element_id ).siblings( '#' + "#{@resource}_#{@attribute}_size" ).val( @file.size )
-    $( @element_id ).siblings( '#' + "#{@resource}_#{@attribute}_type" ).val( @file.type )
+    hyphenated_resource  = @resource.replace("_", "-")
+    hyphenated_attribute = @attribute.replace("_", "-")
+    
+    $( @element_id ).siblings( "input[data-#{hyphenated_resource}-#{hyphenated_attribute}-file-path]" ).val( @key.replace("${filename}", @file.name) )
+    $( @element_id ).siblings( "input[data#{hyphenated_resource}-#{hyphenated_attribute}-filename]" ).val( @file.name )
+    $( @element_id ).siblings( "input[data#{hyphenated_resource}-#{hyphenated_attribute}-size]" ).val( @file.size )
+    $( @element_id ).siblings( "input[data#{hyphenated_resource}-#{hyphenated_attribute}-type]" ).val( @file.type )
 
     @upload_in_progress = false;
     @upload_completed = true;

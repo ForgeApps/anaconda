@@ -17,24 +17,26 @@ module Anaconda
         rescue
           raise AnacondaError, "attribute options not set for column #{anaconda_field_name}. Did you add `anaconda_for :#{anaconda_field_name}` to the model?"
         end
-        options[:base_key] = instance.send(options[:base_key].to_s) if options[:base_key].kind_of? Symbol
+        if form_options[:base_key]
+          options[:base_key] = form_options[:base_key]
+        else
+          options[:base_key] = instance.send(options[:base_key].to_s) if options[:base_key].kind_of? Symbol
+        end
         
         uploader = S3Uploader.new(options)
 
         output += self.input_field "file", name: "file", id: element_id, as: :file, data: {url: uploader.url, form_data: uploader.fields.to_json, media_types: Anaconda.js_file_types}
       end
 
-      output += self.hidden_field "#{anaconda_field_name}_filename".to_sym
-      output += self.hidden_field "#{anaconda_field_name}_file_path".to_sym
-      output += self.hidden_field "#{anaconda_field_name}_size".to_sym
-      output += self.hidden_field "#{anaconda_field_name}_original_filename".to_sym
-      output += self.hidden_field "#{anaconda_field_name}_stored_privately".to_sym
-      output += self.hidden_field "#{anaconda_field_name}_type".to_sym
-
+      output += self.hidden_field "#{anaconda_field_name}_filename".to_sym, data: {"#{instance.class.to_s.underscore}_#{anaconda_field_name}_filename" => true}
+      output += self.hidden_field "#{anaconda_field_name}_file_path".to_sym, data: {"#{instance.class.to_s.underscore}_#{anaconda_field_name}_file_path" => true}
+      output += self.hidden_field "#{anaconda_field_name}_size".to_sym, data: {"#{instance.class.to_s.underscore}_#{anaconda_field_name}_size" => true}
+      output += self.hidden_field "#{anaconda_field_name}_original_filename".to_sym, data: {"#{instance.class.to_s.underscore}_#{anaconda_field_name}_original_filename" => true}
+      output += self.hidden_field "#{anaconda_field_name}_stored_privately".to_sym, data: {"#{instance.class.to_s.underscore}_#{anaconda_field_name}_stored_privately" => true}
+      output += self.hidden_field "#{anaconda_field_name}_type".to_sym, data: {"#{instance.class.to_s.underscore}_#{anaconda_field_name}_type" => true}
       # output += render(:template =>"anaconda/_uploader_form_for.html.haml", :locals => {resource: instance, options: options.merge(as: anaconda_field_name, form_options: form_options, element_id: element_id )}, layout: false).to_s
 
       options = options.merge(as: anaconda_field_name, form_options: form_options, element_id: element_id )
-
       output += <<-END
 <div id="#{instance.class.to_s.underscore}_#{anaconda_field_name}_details"></div>
 
