@@ -239,8 +239,9 @@ class @AnacondaUploadField
     # DLog "will now fill form #{@upload_complete_form_to_fill}"
 
     DLog "#{@resource}_#{@attribute}_file_path"
-    hyphenated_resource  = @resource.replace("_", "-")
-    hyphenated_attribute = @attribute.replace("_", "-")
+    hyphenated_resource  = @resource.replace(/_/g, "-")
+    hyphenated_attribute = @attribute.replace(/_/g, "-")
+    DLog "input[data-#{hyphenated_resource}-#{hyphenated_attribute}-file-path]"
     
     $( @element_id ).siblings( "input[data-#{hyphenated_resource}-#{hyphenated_attribute}-file-path]" ).val( @key.replace("${filename}", @file.name) )
     $( @element_id ).siblings( "input[data-#{hyphenated_resource}-#{hyphenated_attribute}-filename]" ).val( @file.name )
