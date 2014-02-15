@@ -149,9 +149,16 @@ We highly recommend the `figaro` gem [https://github.com/laserlemon/figaro](http
     * :asset_type
     * :asset_url
     
-    The magic method is asset_url which will return a signed S3 URL if the file is stored with an ACL of `private` and will return a non-signed URL if the file is stored with public access.
+    The magic methods are asset_url and asset_download_url.
+    
+    `asset_url` will return a signed S3 URL if the file is stored with an ACL of `private` and will return a non-signed URL if the file is stored with public access.
+    
+    `asset_download_url` will return a signed S3 URL with content-disposition set to attachment so the file will be downloaded instead of opened in the browser.
 
 ## Changelog
+* 0.10.0
+  * Add `download_url` magic method that uses content-disposition to force the browser to download the URL. This is a signed AWS url that is only valid for 1 hour
+
 * 0.9.10
   * Fix bug when attribute had more than one underscore
   
