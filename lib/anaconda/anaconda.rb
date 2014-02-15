@@ -1,3 +1,3 @@
 module Anaconda
-  MagicMethods = [:url]
+  MagicMethods = [:url, :download_url]
 end
