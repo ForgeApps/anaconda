@@ -117,7 +117,8 @@ We highly recommend the `figaro` gem [https://github.com/laserlemon/figaro](http
 	* `allowed_file_types` default: _all_
 	* `host` String. If specified, this will be used to access publically stored objects instead of the S3 bucket. Useful for CloudFront integration. Note: At this time privately stored objects will still be requested via S3. Default: _false_
 	* `protocol` `https`, `http`, or `:auto`. If `:auto`, `//` will be used as the protocol. Note: At this time, all privately stored objects are requested over https. Default: `http`
-
+  * `remove_previous_s3_files_on_change` Boolean. If true, files will be removed from S3 when a new file is uploaded. Default: `true`
+  * `remove_previous_s3_files_on_destroy` Boolean. If true, files will be removed from S3 when a record is destroyed. Default: `true`
 
 *  Form setup
 
@@ -156,6 +157,10 @@ We highly recommend the `figaro` gem [https://github.com/laserlemon/figaro](http
     `asset_download_url` will return a signed S3 URL with content-disposition set to attachment so the file will be downloaded instead of opened in the browser.
 
 ## Changelog
+* 0.12.0
+  * Delete files from S3 when a new one us uploaded, or the record is deleted.
+  * Add options to disable deleting files from S3 when a new one is uploaded (`remove_previous_s3_files_on_change` and `remove_previous_s3_files_on_destroy`). These default to `true`
+  
 * 0.11.0
   * Change aws URLs to use path style URLs
   
