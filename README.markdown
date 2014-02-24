@@ -76,6 +76,27 @@ We highly recommend the `figaro` gem [https://github.com/laserlemon/figaro](http
 *  Controller changes
   	
   	You must add these parameters to your permitted parameters. In Rails 4 this is done via strong parameters in the controller. In Rails 3 this is done in the model via attr_accessible.
+  	
+  	We add two Class methods on the model that return an array of columns used by each anaconda_for column. One is scoped per anaconda field, and the other returns all of the columns anaconda needs for the entire model. This is useful if you have multiple anaconda columns in your model.
+  	
+  	You can use these methods in your strong parameter list directly. Ex:
+  	
+  		PostMediasController < Application Controller
+  		...
+	  		def post_media_params
+	  			params.require(:post_media).permit(
+	  			:name,
+	  			:foobar,
+	  			PostMedia.anaconda_fields_for( :asset )
+	  			)
+	  		end
+  		end
+  	
+  	This keeps your strong parameter list clean and dry. If you have multiple anaconda models in your model and you wish for all of the params for all of the models to be permitted, you may use `PostMedia.anaconda_fields_for_all_columns` instead.
+  	
+  	We have not tested if you can use `Model.anaconda_fields_for( column )` in the rails 3 attr_accessible list.
+  	
+  	If you prefer to do this manually the fields this permit are listed below.
 
   	For each `anaconda_for` (assuming `anaconda_for :asset`):
   	
@@ -149,6 +170,7 @@ We highly recommend the `figaro` gem [https://github.com/laserlemon/figaro](http
     * :asset_stored_privately
     * :asset_type
     * :asset_url
+    * :asset_download_url
     
     The magic methods are asset_url and asset_download_url.
     
@@ -160,6 +182,7 @@ We highly recommend the `figaro` gem [https://github.com/laserlemon/figaro](http
 * 0.12.0
   * Delete files from S3 when a new one us uploaded, or the record is deleted.
   * Add options to disable deleting files from S3 when a new one is uploaded (`remove_previous_s3_files_on_change` and `remove_previous_s3_files_on_destroy`). These default to `true`
+  * Add `Model.anaconda_fields_for_all_columns` and `Model.anaconda_fields_for(column_name)` methods to make strong parameters cleaner
   
 * 0.11.0
   * Change aws URLs to use path style URLs

@@ -45,6 +45,23 @@ module Anaconda
         
         self.after_commit :anaconda_remove_previous_s3_files_on_change_or_destroy
       end
+      
+      def anaconda_fields_for( anaconda_column )
+        if self.anaconda_columns.include? anaconda_column.to_sym
+          Anaconda::FieldSuffixes.collect do |suffix|
+            "#{anaconda_column}_#{suffix}".to_sym
+          end
+        else
+          raise "#{anaconda_column} not configured for anaconda. Misspelling or did you forget to add the anaconda_for call for this field?"
+        end
+      end
+      
+      def anaconda_fields_for_all_columns
+        self.anaconda_columns.collect do |column|
+          anaconda_fields_for column
+        end.flatten
+      end
+      
     end
     module InstanceMethods
       def method_missing(method, *args, &block)
