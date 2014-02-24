@@ -49,4 +49,9 @@ module Anaconda
     end
     return js_file_types
   end
+  
+  def self.remove_s3_object_in_bucket_with_file_path(bucket, file_path)
+    aws = Fog::Storage.new({:provider => 'AWS', :aws_access_key_id => Anaconda.aws[:aws_access_key], :aws_secret_access_key => Anaconda.aws[:aws_secret_key], :path_style => true})
+    aws.delete_object(bucket, file_path)
+  end
 end

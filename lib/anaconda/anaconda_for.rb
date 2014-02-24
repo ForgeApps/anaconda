@@ -38,8 +38,12 @@ module Anaconda
           allowed_file_types: [],
           base_key: "#{self.to_s.pluralize.downcase}/#{anaconda_column.to_s.pluralize}/#{(0...32).map{(65+rand(26)).chr}.join.downcase}",
           host: false,
-          protocol: "http"
+          protocol: "http",
+          remove_previous_s3_files_on_change: true,
+          remove_previous_s3_files_on_destroy: true
         )
+        
+        self.after_commit :anaconda_remove_previous_s3_files_on_change_or_destroy
       end
     end
     module InstanceMethods
@@ -94,6 +98,31 @@ module Anaconda
           "//"
         else
           "#{self.anaconda_options[column_name.to_sym][:protocol]}://"
+        end
+      end
+      
+      def anaconda_remove_previous_s3_files_on_change_or_destroy
+        
+        if self.destroyed?
+          self.class.anaconda_columns.each do |column_name|
+            next unless self.anaconda_options[column_name.to_sym][:remove_previous_s3_files_on_destroy]
+            if self.send("#{column_name}_file_path").present?
+              Anaconda.remove_s3_object_in_bucket_with_file_path(Anaconda.aws[:aws_bucket], self.send("#{column_name}_file_path"))
+            end
+          end
+        else
+          self.class.anaconda_columns.each do |column_name|
+            next unless self.anaconda_options[column_name.to_sym][:remove_previous_s3_files_on_change]
+            if self.previous_changes["#{column_name}_file_path"].present?
+              # Looks like this field was edited.
+              if self.previous_changes["#{column_name}_file_path"][0].present? &&
+                self.previous_changes["#{column_name}_file_path"][0] != self.previous_changes["#{column_name}_file_path"][1]
+                # It's not a new entry ([0] would be nil), and it really did change, wasn't just committed for no reason
+                # So let's delete the previous file from S3
+                Anaconda.remove_s3_object_in_bucket_with_file_path(Anaconda.aws[:aws_bucket], self.previous_changes["#{column_name}_file_path"][0])
+              end
+            end
+          end
         end
       end
     end
