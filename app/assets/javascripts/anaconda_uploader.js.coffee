@@ -92,7 +92,7 @@ class @AnacondaUploadField
     @file = null
     @file_data = null
     @media_types = $(@element_id).data('media-types')
-    
+    @acl = $(@element_id).data('form-data').acl
     
     @base_key = options.base_key ? ""
     @key = options.key ? "#{@base_key}/${filename}"
@@ -179,6 +179,12 @@ class @AnacondaUploadField
     
   reset: ->
     @upload_details_container.html ''
+    
+  stored_privately: ->
+    if @acl == "private"
+      true
+    else
+      false
 
   file_selected: (data) ->
     DLog data
@@ -238,16 +244,15 @@ class @AnacondaUploadField
     #   })
 
     # DLog "will now fill form #{@upload_complete_form_to_fill}"
-
-    DLog "#{@resource}_#{@attribute}_file_path"
     hyphenated_resource  = @resource.replace(/_/g, "-")
     hyphenated_attribute = @attribute.replace(/_/g, "-")
-    DLog "input[data-#{hyphenated_resource}-#{hyphenated_attribute}-file-path]"
     
     $( @element_id ).siblings( "input[data-#{hyphenated_resource}-#{hyphenated_attribute}-file-path]" ).val( @key.replace("${filename}", @file.name) )
     $( @element_id ).siblings( "input[data-#{hyphenated_resource}-#{hyphenated_attribute}-filename]" ).val( @file.name )
     $( @element_id ).siblings( "input[data-#{hyphenated_resource}-#{hyphenated_attribute}-size]" ).val( @file.size )
     $( @element_id ).siblings( "input[data-#{hyphenated_resource}-#{hyphenated_attribute}-type]" ).val( @file.type )
+    $( @element_id ).siblings( "input[data-#{hyphenated_resource}-#{hyphenated_attribute}-original-filename]" ).val( @file.name )
+    $( @element_id ).siblings( "input[data-#{hyphenated_resource}-#{hyphenated_attribute}-stored-privately]" ).val( @stored_privately() )
 
     @upload_in_progress = false;
     @upload_completed = true;
