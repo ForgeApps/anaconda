@@ -179,6 +179,12 @@ We highly recommend the `figaro` gem [https://github.com/laserlemon/figaro](http
     `asset_download_url` will return a signed S3 URL with content-disposition set to attachment so the file will be downloaded instead of opened in the browser.
 
 ## Changelog
+* 0.12.1
+  * Make progress bar go to 100% on upload complete
+  * Properly store ACL on file upload (`asset_stored_privately`)
+  * Properly store `original_filename` on upload
+  * Fix bug when dragging and dropping onto the file select button
+
 * 0.12.0
   * Delete files from S3 when a new one us uploaded, or the record is deleted.
   * Add options to disable deleting files from S3 when a new one is uploaded (`remove_previous_s3_files_on_change` and `remove_previous_s3_files_on_destroy`). These default to `true`
