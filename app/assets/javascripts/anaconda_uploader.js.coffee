@@ -10,6 +10,7 @@ class @AnacondaUploadManager
     @upload_automatically = false
     @submit_automatically = false
     @setup_form_submit_handler()
+    @bind_dropzone_effects()
     self = this
     $(document).on "page:fetch", ->
       DLog "page:fetch"
@@ -70,6 +71,37 @@ class @AnacondaUploadManager
     @form.find("input[type='submit']").prop( "disabled", true );
   enable_submit_button: ->
     @form.find("input[type='submit']").prop( "disabled", false );
+    
+  bind_dropzone_effects: ->
+    $(document).bind 'drop dragover', (e) ->
+      e.preventDefault()
+      
+    $(document).bind 'dragover', (e) ->
+      dropZone = $('.anaconda_dropzone')
+      timeout = window.dropZoneTimeout
+      if !timeout
+        dropZone.addClass('in');
+      else
+        clearTimeout(timeout);
+        
+      found = false
+      node = e.target
+      
+      while node != null
+        if node in dropZone
+            found = true
+            break
+          node = node.parentNode;
+      
+      if found
+        dropZone.addClass('hover')
+      else
+        dropZone.removeClass('hover')
+
+      window.dropZoneTimeout = setTimeout ->
+        window.dropZoneTimeout = null
+        dropZone.removeClass('in hover')
+      , 100    
 
 class @AnacondaUploadField  
   constructor: (options = {}) ->
@@ -118,7 +150,7 @@ class @AnacondaUploadField
   setup_fileupload: ->
     self = this
     $( @element_id ).fileupload
-      #dropZone: $("#dropzone")
+      dropZone: $( @element_id ).parent(".anaconda_dropzone"),
       add: (e, data) ->
         DLog data
         self.file_selected data
@@ -145,9 +177,6 @@ class @AnacondaUploadField
         DLog(data.textStatus )
         DLog("data.jqXHR:")
         DLog(data.jqXHR )
-
-    $(document).bind 'drop dragover', (e) ->
-      e.preventDefault()
 
   upload: ->
     return if @upload_completed

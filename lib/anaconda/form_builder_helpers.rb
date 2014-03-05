@@ -24,8 +24,9 @@ module Anaconda
         end
         
         uploader = S3Uploader.new(options)
-
+        output += "<div class='anaconda_dropzone'>"
         output += self.input_field "file", name: "file", id: element_id, as: :file, data: {url: uploader.url, form_data: uploader.fields.to_json, media_types: Anaconda.js_file_types}
+        output += "</div>"
       end
 
       output += self.hidden_field "#{anaconda_field_name}_filename".to_sym, data: {"#{instance.class.to_s.underscore}_#{anaconda_field_name}_filename" => true}
