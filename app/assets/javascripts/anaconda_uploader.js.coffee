@@ -129,6 +129,7 @@ class @AnacondaUploadField
         self.update_progress_to(progress)
 
       done: (e, data) ->
+        self.update_progress_to(100)
         self.file_completed_upload data
 
       fail: (e, data) ->
