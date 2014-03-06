@@ -7,7 +7,7 @@ module Anaconda
       options = {}
 
       element_id = "anaconda_file_#{anaconda_field_name}"
-
+      output += "<div class='anaconda_dropzone'>"
       if self.class == SimpleForm::FormBuilder
         instance = self.object
         a_class = self.object.class unless self.object.kind_of? Class
@@ -24,9 +24,7 @@ module Anaconda
         end
         
         uploader = S3Uploader.new(options)
-        output += "<div class='anaconda_dropzone'>"
         output += self.input_field "file", name: "file", id: element_id, as: :file, data: {url: uploader.url, form_data: uploader.fields.to_json, media_types: Anaconda.js_file_types}
-        output += "</div>"
       end
 
       output += self.hidden_field "#{anaconda_field_name}_filename".to_sym, data: {"#{instance.class.to_s.underscore}_#{anaconda_field_name}_filename" => true}
@@ -36,6 +34,8 @@ module Anaconda
       output += self.hidden_field "#{anaconda_field_name}_stored_privately".to_sym, data: {"#{instance.class.to_s.underscore}_#{anaconda_field_name}_stored_privately" => true}
       output += self.hidden_field "#{anaconda_field_name}_type".to_sym, data: {"#{instance.class.to_s.underscore}_#{anaconda_field_name}_type" => true}
       # output += render(:template =>"anaconda/_uploader_form_for.html.haml", :locals => {resource: instance, options: options.merge(as: anaconda_field_name, form_options: form_options, element_id: element_id )}, layout: false).to_s
+      
+      output += "</div>" #anaconda_dropzone
 
       options = options.merge(as: anaconda_field_name, form_options: form_options, element_id: element_id )
       output += <<-END
