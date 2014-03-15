@@ -179,6 +179,9 @@ We highly recommend the `figaro` gem [https://github.com/laserlemon/figaro](http
     `asset_download_url` will return a signed S3 URL with content-disposition set to attachment so the file will be downloaded instead of opened in the browser.
 
 ## Changelog
+* 0.13.0
+  * Set Content-Type for S3 file to match that of the uploaded source file.
+  
 * 0.12.2
   * Fix bug introduced in 0.12.1
   * Wrap hidden fields in the anaconda_dropzone div (to fix bug)
