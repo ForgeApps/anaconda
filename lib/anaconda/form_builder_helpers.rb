@@ -93,6 +93,7 @@ module Anaconda
         {
           :key => key,
           :acl => @options[:acl],
+          "Content-Type" => "application/octet-stream",
           :policy => policy,
           :signature => signature,
           "AWSAccessKeyId" => @options[:aws_access_key_id],
@@ -121,6 +122,7 @@ module Anaconda
           conditions: [
             #["starts-with", "$utf8", ""],
             ["starts-with", "$key", base_key],
+            ["starts-with", "$Content-Type", ""],
             ["content-length-range", 1, @options[:max_file_size]],
             {bucket: @options[:bucket]},
             {acl: @options[:acl]}

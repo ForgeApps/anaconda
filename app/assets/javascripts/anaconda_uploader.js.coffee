@@ -152,7 +152,6 @@ class @AnacondaUploadField
     $( @element_id ).fileupload
       dropZone: $( @element_id ).parent(".anaconda_dropzone"),
       add: (e, data) ->
-        DLog data
         self.file_selected data
       progress: (e, data) ->
         DLog data
@@ -216,10 +215,13 @@ class @AnacondaUploadField
       false
 
   file_selected: (data) ->
+    DLog "file_selected"
     DLog data
     if @is_allowed_type(data.files[0])
       @file = data.files[0]
       @file_data = data
+      @set_content_type()
+      
       DLog @file
       @upload_details_container.html "<div id='upload_file_#{@get_id()}' class='upload-file #{@get_media_type(@file)}'><span class='file-name'>#{@file.name}</span><span class='size'>#{@readable_size()}</span><span class='progress-percent'></span><div class='progress'><span class='progress-bar'></span></div></div>"
 
@@ -230,6 +232,15 @@ class @AnacondaUploadField
         DLog "Not auto upload"
     else
       alert "#{data.files[0].name} is a #{@get_media_type(data.files[0])} file. Only #{@allowed_types.join(", ")} files are allowed."
+      
+  set_content_type: ->
+    form_data = $(@element_id).data('form-data')
+    form_data["Content-Type"] = @file.type
+    
+    $( @element_id ).fileupload(
+      formData: form_data
+    )
+    
   get_id: ->
     hex_md5( "#{@file.name} #{@file.size}" )
   
