@@ -8,14 +8,14 @@ module Anaconda
     argument :field_name, :type => :string, :default => "asset"
 
     def create_migration_file
-      destination = "db/migrate/#{Time.now.strftime('%Y%m%d%H%M%S')}_anaconda_migration_for_#{file_name}_#{field_name}.rb".gsub(" ", "")
+      destination = "db/migrate/#{Time.now.utc.strftime('%Y%m%d%H%M%S')}_anaconda_migration_for_#{file_name}_#{field_name}.rb".gsub(" ", "")
       migration_name = "AnacondaMigrationFor#{file_name.titlecase}#{field_name.titlecase}".gsub(" ", "")
       count = nil
       i = 1
       while !Dir.glob("db/migrate/*_anaconda_migration_for_#{file_name}_#{field_name}#{count}.rb".gsub(" ", "")).empty?
         i += 1
         count = "_#{i}"
-        destination = "db/migrate/#{Time.now.strftime('%Y%m%d%H%M%S')}_anaconda_migration_for_#{file_name}_#{field_name}#{count}.rb".gsub(" ", "")
+        destination = "db/migrate/#{Time.now.utc.strftime('%Y%m%d%H%M%S')}_anaconda_migration_for_#{file_name}_#{field_name}#{count}.rb".gsub(" ", "")
         migration_name = "AnacondaMigrationFor#{file_name.titlecase}#{field_name.titlecase}#{i}".gsub(" ", "")
       end
       create_file destination, <<-FILE
