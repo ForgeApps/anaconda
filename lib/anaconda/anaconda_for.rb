@@ -75,7 +75,7 @@ module Anaconda
           end
           case checking_method
           when :url
-            anaconda_url(checking_column)
+            anaconda_url(checking_column, *args)
           when :download_url
             anaconda_download_url(checking_column)          
           else
@@ -87,16 +87,19 @@ module Anaconda
       end
 
       private
-      def anaconda_url(column_name)
+      def anaconda_url(column_name, *args)
         return nil unless send("#{column_name}_file_path").present?
+        options = args.extract_options!
+        logger.debug "Extracted Options:"
+        logger.debug(options)
 
         if send("#{column_name}_stored_privately")
           aws = Fog::Storage.new({:provider => 'AWS', :aws_access_key_id => Anaconda.aws[:aws_access_key], :aws_secret_access_key => Anaconda.aws[:aws_secret_key], :path_style => true})
           aws.get_object_https_url(Anaconda.aws[:aws_bucket], send("#{column_name}_file_path"), 1.hour.from_now)
         elsif self.anaconda_options[column_name.to_sym][:host]
-          "#{anaconda_protocol(column_name)}#{self.anaconda_options[column_name.to_sym][:host]}/#{send("#{column_name}_file_path")}"
+          "#{anaconda_protocol(column_name, options[:protocol])}#{self.anaconda_options[column_name.to_sym][:host]}/#{send("#{column_name}_file_path")}"
         else
-          "#{anaconda_protocol(column_name)}s3.amazonaws.com/#{Anaconda.aws[:aws_bucket]}/#{send("#{column_name}_file_path")}"
+          "#{anaconda_protocol(column_name, options[:protocol])}s3.amazonaws.com/#{Anaconda.aws[:aws_bucket]}/#{send("#{column_name}_file_path")}"
         end
       end
       
@@ -109,7 +112,8 @@ module Anaconda
 
       end
       
-      def anaconda_protocol(column_name)
+      def anaconda_protocol(column_name, override = nil)
+        return override if override
         case self.anaconda_options[column_name.to_sym][:protocol]
         when :auto
           "//"

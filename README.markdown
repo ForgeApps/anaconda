@@ -176,9 +176,14 @@ We highly recommend the `figaro` gem [https://github.com/laserlemon/figaro](http
     
     `asset_url` will return a signed S3 URL if the file is stored with an ACL of `private` and will return a non-signed URL if the file is stored with public access.
     
+    You may pass an options hash to the `asset_url` magic method. At this time, the only supported option is :protocol. Example: `asset_url({protocol: 'http'})`  This will override the `protocol` option set in the model.
+    
     `asset_download_url` will return a signed S3 URL with content-disposition set to attachment so the file will be downloaded instead of opened in the browser.
 
 ## Changelog
+* 0.14.0
+  * Add ability to specify protocol in the magic `asset_url` method
+
 * 0.13.1
   * Use UTC for timestamp in migration files.
   
