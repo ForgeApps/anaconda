@@ -181,6 +181,9 @@ We highly recommend the `figaro` gem [https://github.com/laserlemon/figaro](http
     `asset_download_url` will return a signed S3 URL with content-disposition set to attachment so the file will be downloaded instead of opened in the browser.
 
 ## Changelog
+* master
+  * Fix incorrect return value from `all_uploads_are_complete` method in AnacondaUploadManager
+
 * 0.14.0
   * Add ability to specify protocol in the magic `asset_url` method
 
