@@ -47,7 +47,7 @@ class @AnacondaUploadManager
   all_uploads_are_complete: ->
     all_completed = true
     for upload_field, i in @anaconda_upload_fields
-      if upload_field.upload_in_progress || (!upload_field.upload_in_progress && upload_field.file != null)
+      if upload_field.upload_in_progress || (!upload_field.upload_in_progress && upload_field.file != null && !upload_field.upload_completed)
         all_completed = false
         break
     return all_completed
