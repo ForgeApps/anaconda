@@ -35,12 +35,16 @@ module Anaconda
       output += self.hidden_field "#{anaconda_field_name}_type".to_sym, data: {"#{instance.class.to_s.underscore}_#{anaconda_field_name}_type" => true}
       # output += render(:template =>"anaconda/_uploader_form_for.html.haml", :locals => {resource: instance, options: options.merge(as: anaconda_field_name, form_options: form_options, element_id: element_id )}, layout: false).to_s
       
+      if form_options[:remove_button] && self.object.send("#{anaconda_field_name}_file_path").present?
+        remove_button_text = form_options[:remove_button].kind_of?(String) ? form_options[:remove_button] : "Remove"
+        output += "<a href='#' data-#{"remove_#{instance.class.to_s.underscore}_#{anaconda_field_name}".gsub('_', '-')}>#{remove_button_text}</a>"
+      end
+      
       output += "</div>" #anaconda_dropzone
 
       options = options.merge(as: anaconda_field_name, form_options: form_options, element_id: element_id )
       output += <<-END
 <div id="#{instance.class.to_s.underscore}_#{anaconda_field_name}_details"></div>
-
 <script>
   (function() {
     window.uploader = new AnacondaUploadField({

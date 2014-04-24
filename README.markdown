@@ -159,6 +159,7 @@ We highly recommend the `figaro` gem [https://github.com/laserlemon/figaro](http
 	* `auto_upload` - If set to true, upload will begin as soon as a file is selected. Default: *false*
 	* `auto_submit` - If set to true, form will submit automatically when upload is completed. Useful when mixed with `auto_upload: true`, especially if the file field is the only field on the form. Default: *true* when auto_upload is false; *false* when auto_upload is true.
   * `base_key` - If supplied, this will be the base_key used for this upload
+  * `remove_button` - If set to a non-false value it will display a link that, when clicked, will set all the anaconda fields to empty strings. This will cause the file to be removed when the form is submitted. If set to a string, the string will be used as the content for the link.
 
 *  Fields
 	
@@ -189,11 +190,12 @@ There are several events fired throughout the upload process that you can subscr
 * `anaconda:manager:uploads-starting` fired when the form is submitted and Anaconda starts uploading the selected files
 * `anaconda:manager:upload-completed` fired each time an upload is completed
 * `anaconda:manager:all-uploads-completed` fired once all uploads have completed
-* `anaconda:file-selected` fired when a file is selected
 * `anaconda:file-upload-failed` fired when an upload fails
 * `anaconda:file-upload-started` fired for each upload when it is started
-* `anaconda:invalid-file-type-selected` fired when a non-permitted file type is selected
+* `anaconda:valid-file-selected` fired when a file is selected
+* `anaconda:invalid-file-selected` fired when a non-permitted file type is selected
 * `anaconda:file-upload-completed` fired when an upload is completed
+* `anaconda:remove-file` fired when a file is removed
 
 If you return false to the following events it will prevent the default behavior:
 
@@ -206,6 +208,7 @@ If you return false to the following events it will prevent the default behavior
   * Fix incorrect return value from `all_uploads_are_complete` method in AnacondaUploadManager
   * Remove unused `upload_helper.rb` and other old code.
   * Add a bunch of JavaScript events
+  * Add a `remove_button` option to the form builder
 
 * 0.14.0
   * Add ability to specify protocol in the magic `asset_url` method
