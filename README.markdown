@@ -179,11 +179,33 @@ We highly recommend the `figaro` gem [https://github.com/laserlemon/figaro](http
     You may pass an options hash to the `asset_url` magic method. At this time, the only supported option is :protocol. Example: `asset_url({protocol: 'http'})`  This will override the `protocol` option set in the model.
     
     `asset_download_url` will return a signed S3 URL with content-disposition set to attachment so the file will be downloaded instead of opened in the browser.
+### Advanced Usage
+
+#### Events
+There are several events fired throughout the upload process that you can subscribe to. Many of them contain useful data along with the event. The documentation needs expanding here.
+
+* `anaconda:manager:upload-manager-constructor` fired when the first upload element constructs an upload manager for a form
+* `anaconda:manager:upload-field-registered` fired when an upload field registers itself with an upload manager
+* `anaconda:manager:uploads-starting` fired when the form is submitted and Anaconda starts uploading the selected files
+* `anaconda:manager:upload-completed` fired each time an upload is completed
+* `anaconda:manager:all-uploads-completed` fired once all uploads have completed
+* `anaconda:file-selected` fired when a file is selected
+* `anaconda:file-upload-failed` fired when an upload fails
+* `anaconda:file-upload-started` fired for each upload when it is started
+* `anaconda:invalid-file-type-selected` fired when a non-permitted file type is selected
+* `anaconda:file-upload-completed` fired when an upload is completed
+
+If you return false to the following events it will prevent the default behavior:
+
+* `anaconda:invalid-file-type-selected` Default behavior is an alert with content `_filename_ is a _filetype_ file. Only _allowed file types_ files are allowed.`
+* `anaconda:file-upload-failed` Default behavior is an alert with content `_filename_ failed to upload.`
+
 
 ## Changelog
 * master
   * Fix incorrect return value from `all_uploads_are_complete` method in AnacondaUploadManager
   * Remove unused `upload_helper.rb` and other old code.
+  * Add a bunch of JavaScript events
 
 * 0.14.0
   * Add ability to specify protocol in the magic `asset_url` method

@@ -1,3 +1,11 @@
+triggerEvent = (name, data) ->
+  # Taken directly from Turbolinks with no shame.
+  # https://github.com/rails/turbolinks/blob/master/lib/assets/javascripts/turbolinks.js.coffee
+  event = document.createEvent 'Events'
+  event.data = data if data
+  event.initEvent name, true, true
+  document.dispatchEvent event
+
 class @AnacondaUploadManager
   constructor: (options = {}) ->
     @anaconda_upload_fields = []
@@ -5,6 +13,7 @@ class @AnacondaUploadManager
     @form = $("##{options.form_id}")
     @upload_automatically = false
     @submit_automatically = false
+    triggerEvent "anaconda:manager:upload-manager-constructor", form: @form
     @setup_form_submit_handler()
     @bind_dropzone_effects()
     self = this
@@ -14,6 +23,7 @@ class @AnacondaUploadManager
     
   register_upload_field: (anaconda_upload_field)->
     DLog "Registering Upload Field"
+    triggerEvent "anaconda:manager:upload-field-registered", upload_field: anaconda_upload_field
     @anaconda_upload_fields.push anaconda_upload_field
     if anaconda_upload_field.upload_automatically
       # If _any_ of them have an auto upload, we want to know
@@ -30,6 +40,7 @@ class @AnacondaUploadManager
     self = e.data.self
     return true if self.upload_automatically || self.all_uploads_are_complete()
     e.preventDefault()
+    triggerEvent "anaconda:manager:uploads-starting"
     $(this).off( 'submit', self.form_submit_handler )
 
     for upload_field, i in self.anaconda_upload_fields
@@ -49,6 +60,7 @@ class @AnacondaUploadManager
     return all_completed
   
   upload_completed: ->
+    triggerEvent "anaconda:manager:upload-completed"
     all_completed = true
     for upload_field, i in @anaconda_upload_fields
       if upload_field.upload_in_progress
@@ -58,6 +70,7 @@ class @AnacondaUploadManager
       @all_uploads_completed()
       
   all_uploads_completed: ->
+    triggerEvent "anaconda:manager:all-uploads-completed"
     if !@upload_automatically || @submit_automatically
       @form.submit()
     else
@@ -148,6 +161,7 @@ class @AnacondaUploadField
     $( @element_id ).fileupload
       dropZone: $( @element_id ).parent(".anaconda_dropzone"),
       add: (e, data) ->
+        triggerEvent "anaconda:file-selected", file: data.files[0]
         self.file_selected data
       progress: (e, data) ->
         DLog data
@@ -160,22 +174,23 @@ class @AnacondaUploadField
         self.file_completed_upload data
 
       fail: (e, data) ->
-        alert("#{data.files[0].name} failed to upload.")
-        DLog("Upload failed:")
-        DLog("Error:")
-        DLog(e)
-        DLog("data:")
-        DLog(data)
-        DLog("data.errorThrown:")
-        DLog(data.errorThrown )
-        DLog("data.textStatus:")
-        DLog(data.textStatus )
-        DLog("data.jqXHR:")
-        DLog(data.jqXHR )
+        alert("#{data.files[0].name} failed to upload.") if triggerEvent "anaconda:file-upload-failed", data: data
+        # DLog("Upload failed:")
+        # DLog("Error:")
+        # DLog(e)
+        # DLog("data:")
+        # DLog(data)
+        # DLog("data.errorThrown:")
+        # DLog(data.errorThrown )
+        # DLog("data.textStatus:")
+        # DLog(data.textStatus )
+        # DLog("data.jqXHR:")
+        # DLog(data.jqXHR )
 
   upload: ->
     return if @upload_completed
     if @file != null && @file_data != null
+      triggerEvent "anaconda:file-upload-started", file: @file
       $("input#key").val @key
       @file_data.submit()
       @upload_in_progress = true
@@ -227,7 +242,8 @@ class @AnacondaUploadField
       else
         DLog "Not auto upload"
     else
-      alert "#{data.files[0].name} is a #{@get_media_type(data.files[0])} file. Only #{@allowed_types.join(", ")} files are allowed."
+      if !(triggerEvent "anaconda:invalid-file-type-selected", file: data.files[0])
+        alert "#{data.files[0].name} is a #{@get_media_type(data.files[0])} file. Only #{@allowed_types.join(", ")} files are allowed."
       
   set_content_type: ->
     form_data = $(@element_id).data('form-data')
@@ -256,6 +272,7 @@ class @AnacondaUploadField
     @upload_details_container.find('.progress-bar').css('width', progress + '%')
   
   file_completed_upload: (data) ->
+    triggerEvent "anaconda:file-upload-completed", file: @file
     DLog "#{@file.name} completed uploading"
     DLog @file
 
