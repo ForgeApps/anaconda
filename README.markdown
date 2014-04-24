@@ -2,7 +2,7 @@
 
 Dead simple direct-to-s3 file uploading for your rails app.
 
-Current Version: 0.14.0
+Current Version: 1.0.0
 
 ## Installation
 
@@ -199,10 +199,10 @@ If you return false to the following events it will prevent the default behavior
 
 
 ## Versioning
-From version 1.0 on we have used [Semantic Versioning](http://semver.org/).
+From version 1.0.0 on we have used [Semantic Versioning](http://semver.org/).
 
 ## Changelog
-* master
+* 1.0.0
   * Fix incorrect return value from `all_uploads_are_complete` method in AnacondaUploadManager
   * Remove unused `upload_helper.rb` and other old code.
   * Add a bunch of JavaScript events
