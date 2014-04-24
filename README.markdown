@@ -199,7 +199,7 @@ If you return false to the following events it will prevent the default behavior
 
 
 ## Versioning
-From version 1.0 on we have used (Semantic Versioning)[http://semver.org/].
+From version 1.0 on we have used [Semantic Versioning](http://semver.org/).
 
 ## Changelog
 * master
