@@ -1,12 +1,8 @@
-# anaconda
+# Anaconda
 
 Dead simple direct-to-s3 file uploading for your rails app.
 
-## Alpha Warning
-
-We intend to follow semantic versioning as of 1.0. Before that time breaking changes may occur, as development is very active.
-
-If you require stability before that time, you are strongly encouraged to specify an exact version in your `Gemfile` to avoid updating to a version that breaks things for you.
+Current Version: 0.14.0
 
 ## Installation
 
@@ -159,7 +155,6 @@ We highly recommend the `figaro` gem [https://github.com/laserlemon/figaro](http
 	* `auto_upload` - If set to true, upload will begin as soon as a file is selected. Default: *false*
 	* `auto_submit` - If set to true, form will submit automatically when upload is completed. Useful when mixed with `auto_upload: true`, especially if the file field is the only field on the form. Default: *true* when auto_upload is false; *false* when auto_upload is true.
   * `base_key` - If supplied, this will be the base_key used for this upload
-  * `remove_button` - If set to a non-false value it will display a link that, when clicked, will set all the anaconda fields to empty strings. This will cause the file to be removed when the form is submitted. If set to a string, the string will be used as the content for the link.
 
 *  Fields
 	
@@ -180,6 +175,7 @@ We highly recommend the `figaro` gem [https://github.com/laserlemon/figaro](http
     You may pass an options hash to the `asset_url` magic method. At this time, the only supported option is :protocol. Example: `asset_url({protocol: 'http'})`  This will override the `protocol` option set in the model.
     
     `asset_download_url` will return a signed S3 URL with content-disposition set to attachment so the file will be downloaded instead of opened in the browser.
+
 ### Advanced Usage
 
 #### Events
@@ -190,12 +186,11 @@ There are several events fired throughout the upload process that you can subscr
 * `anaconda:manager:uploads-starting` fired when the form is submitted and Anaconda starts uploading the selected files
 * `anaconda:manager:upload-completed` fired each time an upload is completed
 * `anaconda:manager:all-uploads-completed` fired once all uploads have completed
+* `anaconda:file-selected` fired when a file is selected
 * `anaconda:file-upload-failed` fired when an upload fails
 * `anaconda:file-upload-started` fired for each upload when it is started
-* `anaconda:valid-file-selected` fired when a file is selected
-* `anaconda:invalid-file-selected` fired when a non-permitted file type is selected
+* `anaconda:invalid-file-type-selected` fired when a non-permitted file type is selected
 * `anaconda:file-upload-completed` fired when an upload is completed
-* `anaconda:remove-file` fired when a file is removed
 
 If you return false to the following events it will prevent the default behavior:
 
@@ -203,95 +198,16 @@ If you return false to the following events it will prevent the default behavior
 * `anaconda:file-upload-failed` Default behavior is an alert with content `_filename_ failed to upload.`
 
 
+## Versioning
+From version 1.0 on we have used (Semantic Versioning)[http://semver.org/].
+
 ## Changelog
 * master
   * Fix incorrect return value from `all_uploads_are_complete` method in AnacondaUploadManager
   * Remove unused `upload_helper.rb` and other old code.
   * Add a bunch of JavaScript events
-  * Add a `remove_button` option to the form builder
 
-* 0.14.0
-  * Add ability to specify protocol in the magic `asset_url` method
-
-* 0.13.1
-  * Use UTC for timestamp in migration files.
-  
-* 0.13.0
-  * Set Content-Type for S3 file to match that of the uploaded source file.
-  
-* 0.12.2
-  * Fix bug introduced in 0.12.1
-  * Wrap hidden fields in the anaconda_dropzone div (to fix bug)
-  
-* 0.12.1
-  * Make progress bar go to 100% on upload complete
-  * Properly store ACL on file upload (`asset_stored_privately`)
-  * Properly store `original_filename` on upload
-  * Fix bug when dragging and dropping onto the file select button
-
-* 0.12.0
-  * Delete files from S3 when a new one us uploaded, or the record is deleted.
-  * Add options to disable deleting files from S3 when a new one is uploaded (`remove_previous_s3_files_on_change` and `remove_previous_s3_files_on_destroy`). These default to `true`
-  * Add `Model.anaconda_fields_for_all_columns` and `Model.anaconda_fields_for(column_name)` methods to make strong parameters cleaner
-  
-* 0.11.0
-  * Change aws URLs to use path style URLs
-  
-* 0.10.0
-  * Add `download_url` magic method that uses content-disposition to force the browser to download the URL. This is a signed AWS url that is only valid for 1 hour
-
-* 0.9.10
-  * Fix bug when attribute had more than one underscore
-  
-* 0.9.9
-  * Fix bug untroduced in previous version
-* 0.9.8
-  * Add `base_key` option
-  * Change the way we identify hidden elements to work when we're using this in a nested form.
-  
-* 0.9.7
-  * Add percent sign to progress-percent div
-  
-* 0.9.6
-  * Fix `auto_upload` and `auto_submit` options.
-  
-* 0.9.5
-  * add `host` and `protocol` options to `anaconda_for`
-
-* 0.9.4
-	* 	Fix uploads. Previous version broke them completely.
-	
-* 0.9.3
-	* If no files have been selected, let form submit as normal
-
-* 0.9.2
-  * Always use UTC for policy expiration date, even if Time.zone is set to something else.
-
-* 0.9.1
-  
-  * Fix for anaconda:migration when the field name has an underscore in it
-
-* 0.9.0
-
-  * Add support for multiple anaconda uploaders per form
-  
-  * Completely refactor JavaScript file to support multiple uploaders
-  
-  * Add auto_submit option
-  
-  * Fix support for allowed_types
-  
-  * Add file_types to anaconda config
-  
-  * Add fix for sites using Turbolinks
-
-* 0.2.0
-	
-	* Add support for multiple `anaconda_for` calls per model. Currently limited to one per form, however.
-
-	* Improve migration generation file and class naming to include field name
-
-	* `post_media.asset_url` will now return nil if the file_path is nil
+See [changelog](CHANGELOG.md) for previous changes
   
 ## Contributing to anaconda
 
