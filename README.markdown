@@ -183,6 +183,7 @@ We highly recommend the `figaro` gem [https://github.com/laserlemon/figaro](http
 ## Changelog
 * master
   * Fix incorrect return value from `all_uploads_are_complete` method in AnacondaUploadManager
+  * Remove unused `upload_helper.rb` and other old code.
 
 * 0.14.0
   * Add ability to specify protocol in the magic `asset_url` method

@@ -1,7 +1,3 @@
-# Three possible configurations:
-# Upload automatically and submit form when upload is complete
-# Done: Upload automatically but do not submit form automatically
-# Done: Do not upload until submit is pressed. The upload and submit form when uploading is complete.
 class @AnacondaUploadManager
   constructor: (options = {}) ->
     @anaconda_upload_fields = []
@@ -263,27 +259,6 @@ class @AnacondaUploadField
     DLog "#{@file.name} completed uploading"
     DLog @file
 
-    # if @upload_complete_post_url? && @upload_complete_post_url != ""
-    #   DLog "will now post to #{@upload_complete_post_url}"
-    #
-    #   file_data = {}
-    #   file_data[@resource] = {}
-    #   file_data[@resource]["#{@attribute}_file_path"] = "#{@base_key}/#{upload_file.file.name}"
-    #   file_data[@resource]["#{@attribute}_filename"] = upload_file.file.name
-    #   file_data[@resource]["#{@attribute}_size"] = upload_file.file.size
-    #   file_data[@resource]["#{@attribute}_type"] = upload_file.file.media_type
-    #   upload_file = this
-    #   $.ajax({
-    #     type: 'PATCH',
-    #     url: @upload_complete_post_url,
-    #     data: $.param(file_data)
-    #     success: (data, textStatus, jqXHR) ->
-    #       DLog "file completed handler complete"
-    #       DLog data
-    #     #TODO: handle a failure on this POST
-    #   })
-
-    # DLog "will now fill form #{@upload_complete_form_to_fill}"
     hyphenated_resource  = @resource.replace(/_/g, "-")
     hyphenated_attribute = @attribute.replace(/_/g, "-")
     
@@ -297,23 +272,3 @@ class @AnacondaUploadField
     @upload_in_progress = false;
     @upload_completed = true;
     @upload_manager().upload_completed()
-
-
-# class @AnacondaUploadFile
-# 
-#   constructor: (@data) ->
-#     @file = @data.files[0]
-#     @media_type = @get_media_type()
-#     @id = @get_id()
-# 
-#     @set_context()
-#   get_media_type: ->
-#     media_type = "unknown"
-#     return media_type
-#   set_context: ->
-#     @data.context = this
-#   submit: ->
-#     @data.submit()
-#   update_progress_to: (progress) ->
-#     $("#upload_file_#{@id} .progress-percent").html progress
-#     $("#upload_file_#{@id}").find('.progress-bar').css('width', progress + '%')
