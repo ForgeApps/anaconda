@@ -202,6 +202,9 @@ If you return false to the following events it will prevent the default behavior
 From version 1.0.0 on we have used [Semantic Versioning](http://semver.org/).
 
 ## Changelog
+* 1.0.1 
+  * Use OpenSSL::Digest instead of deprecated OpenSSL::Digest::Digest.
+  
 * 1.0.0
   * Fix incorrect return value from `all_uploads_are_complete` method in AnacondaUploadManager
   * Remove unused `upload_helper.rb` and other old code.
