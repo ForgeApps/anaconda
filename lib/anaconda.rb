@@ -33,7 +33,7 @@ module Anaconda
     yield self
     
     @@aws[:aws_endpoint] = "s3.amazonaws.com/#{@@aws[:aws_bucket]}" unless @@aws[:aws_endpoint].present?
-    @@aws[:path_style] = !@@aws[:aws_endpoint].starts_with?(@@aws[:aws_bucket])    
+    @@aws[:path_style] = !@@aws[:aws_endpoint].starts_with?(@@aws[:aws_bucket])
   end
   
   def self.js_file_types

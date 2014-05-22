@@ -2,7 +2,7 @@
 
 Dead simple direct-to-s3 file uploading for your rails app.
 
-Current Version: 1.0.3
+Current Version: 1.0.4
 
 ## Installation
 
@@ -202,6 +202,9 @@ If you return false to the following events it will prevent the default behavior
 From version 1.0.0 on we have used [Semantic Versioning](http://semver.org/).
 
 ## Changelog
+* 1.0.4
+  * Add `anaconda_form_data_for()` and `anaconda_form_data_for_all_columns` instance methods that return the raw data needed to upload to AWS
+  
 * 1.0.3
   * Properly define dependencies so they are included
   * Add support for non US Standard region buckets. See new `aws_endpoint` option in the config

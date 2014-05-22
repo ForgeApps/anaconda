@@ -86,6 +86,29 @@ module Anaconda
         end
       end
 
+      def anaconda_form_data_for_all_columns
+        form_data = {}
+        self.anaconda_columns.each do |column|
+          form_data[column.to_sym] = anaconda_form_data_for column
+        end
+        form_data
+      end
+
+      def anaconda_form_data_for( anaconda_column )
+        if self.anaconda_columns.include? anaconda_column.to_sym
+          
+          options = self.class.anaconda_options[anaconda_column.to_sym].dup
+          
+          options[:base_key] = self.send(options[:base_key].to_s) if options[:base_key].kind_of? Symbol
+          uploader  = Anaconda::S3Uploader.new(options)
+          fields = uploader.fields
+          fields[:post_url] = uploader.url
+          fields
+        else
+          raise "#{anaconda_column} not configured for anaconda. Misspelling or did you forget to add the anaconda_for call for this field?"
+        end
+      end
+
       private
       def anaconda_url(column_name, *args)
         return nil unless send("#{column_name}_file_path").present?
