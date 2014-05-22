@@ -94,12 +94,12 @@ module Anaconda
         logger.debug(options)
 
         if send("#{column_name}_stored_privately")
-          aws = Fog::Storage.new({:provider => 'AWS', :aws_access_key_id => Anaconda.aws[:aws_access_key], :aws_secret_access_key => Anaconda.aws[:aws_secret_key], :path_style => true})
+          aws = Fog::Storage.new({:provider => 'AWS', :aws_access_key_id => Anaconda.aws[:aws_access_key], :aws_secret_access_key => Anaconda.aws[:aws_secret_key], :path_style => Anaconda.aws[:path_style]})
           aws.get_object_https_url(Anaconda.aws[:aws_bucket], send("#{column_name}_file_path"), 1.hour.from_now)
         elsif self.anaconda_options[column_name.to_sym][:host]
           "#{anaconda_protocol(column_name, options[:protocol])}#{self.anaconda_options[column_name.to_sym][:host]}/#{send("#{column_name}_file_path")}"
         else
-          "#{anaconda_protocol(column_name, options[:protocol])}s3.amazonaws.com/#{Anaconda.aws[:aws_bucket]}/#{send("#{column_name}_file_path")}"
+          "#{anaconda_protocol(column_name, options[:protocol])}#{Anaconda.aws[:aws_endpoint]}/#{send("#{column_name}_file_path")}"
         end
       end
       
@@ -107,7 +107,7 @@ module Anaconda
         return nil unless send("#{column_name}_file_path").present?
         
         options = {query: {"response-content-disposition" => "attachment;"}}
-        aws = Fog::Storage.new({:provider => 'AWS', :aws_access_key_id => Anaconda.aws[:aws_access_key], :aws_secret_access_key => Anaconda.aws[:aws_secret_key], :path_style => true})
+        aws = Fog::Storage.new({:provider => 'AWS', :aws_access_key_id => Anaconda.aws[:aws_access_key], :aws_secret_access_key => Anaconda.aws[:aws_secret_key], :path_style => Anaconda.aws[:path_style]})
         aws.get_object_https_url(Anaconda.aws[:aws_bucket], send("#{column_name}_file_path"), 1.hour.from_now, options)
 
       end

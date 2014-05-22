@@ -47,7 +47,7 @@ module Anaconda
     end
 
     def url
-      "https://s3.amazonaws.com/#{@options[:bucket]}/"
+      "https://#{Anaconda.aws[:aws_endpoint]}/"
     end
 
     def policy

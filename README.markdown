@@ -2,7 +2,7 @@
 
 Dead simple direct-to-s3 file uploading for your rails app.
 
-Current Version: 1.0.2
+Current Version: 1.0.3
 
 ## Installation
 
@@ -202,6 +202,10 @@ If you return false to the following events it will prevent the default behavior
 From version 1.0.0 on we have used [Semantic Versioning](http://semver.org/).
 
 ## Changelog
+* 1.0.3
+  * Properly define dependencies so they are included
+  * Add support for non US Standard region buckets. See new `aws_endpoint` option in the config
+
 * 1.0.2
   * Refactor S3Uploader into it's own class so it can be used outside of the form helper
   

@@ -16,7 +16,8 @@ module Anaconda
   @@aws = {
     aws_access_key: "",
     aws_secret_key: "",
-    aws_bucket:     ""
+    aws_bucket:     "",
+    aws_endpoint:   ""
   }
   
   @@file_types = {
@@ -30,6 +31,9 @@ module Anaconda
   # to create a fresh initializer with all configuration values.
   def self.config
     yield self
+    
+    @@aws[:aws_endpoint] = "s3.amazonaws.com/#{@@aws[:aws_bucket]}" unless @@aws[:aws_endpoint].present?
+    @@aws[:path_style] = !@@aws[:aws_endpoint].starts_with?(@@aws[:aws_bucket])    
   end
   
   def self.js_file_types
@@ -52,7 +56,7 @@ module Anaconda
   end
   
   def self.remove_s3_object_in_bucket_with_file_path(bucket, file_path)
-    aws = Fog::Storage.new({:provider => 'AWS', :aws_access_key_id => Anaconda.aws[:aws_access_key], :aws_secret_access_key => Anaconda.aws[:aws_secret_key], :path_style => true})
+    aws = Fog::Storage.new({:provider => 'AWS', :aws_access_key_id => Anaconda.aws[:aws_access_key], :aws_secret_access_key => Anaconda.aws[:aws_secret_key], :path_style => @@aws[:path_style]})
     aws.delete_object(bucket, file_path)
   end
 end
