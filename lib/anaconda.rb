@@ -3,6 +3,7 @@ require 'anaconda/anaconda'
 require 'anaconda/errors'
 require 'anaconda/anaconda_for'
 require 'anaconda/railtie'
+require 'anaconda/s3_uploader'
 require 'anaconda/engine'
 require 'anaconda/version'
 
