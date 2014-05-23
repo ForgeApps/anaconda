@@ -202,6 +202,9 @@ If you return false to the following events it will prevent the default behavior
 From version 1.0.0 on we have used [Semantic Versioning](http://semver.org/).
 
 ## Changelog
+* 1.0.5
+  * Fix bug where we were generating the same base_key for all instances if you didn't define a custom method
+  
 * 1.0.4
   * Add `anaconda_form_data_for()` and `anaconda_form_data_for_all_columns` instance methods that return the raw data needed to upload to AWS
   

@@ -36,7 +36,7 @@ module Anaconda
           acl: "public-read",
           max_file_size: 500.megabytes,
           allowed_file_types: [],
-          base_key: "#{self.to_s.pluralize.downcase}/#{anaconda_column.to_s.pluralize}/#{(0...32).map{(65+rand(26)).chr}.join.downcase}",
+          base_key: "#{anaconda_column}_anaconda_default_base_key".to_sym,
           host: false,
           protocol: "http",
           remove_previous_s3_files_on_change: true,
@@ -77,7 +77,9 @@ module Anaconda
           when :url
             anaconda_url(checking_column, *args)
           when :download_url
-            anaconda_download_url(checking_column)          
+            anaconda_download_url(checking_column)
+          when :anaconda_default_base_key
+            anaconda_default_base_key_for(checking_column)
           else
             super
           end
@@ -143,6 +145,10 @@ module Anaconda
         else
           "#{self.anaconda_options[column_name.to_sym][:protocol]}://"
         end
+      end
+      
+      def anaconda_default_base_key_for(column_name)
+        "#{self.class.to_s.pluralize.downcase}/#{column_name.to_s.pluralize}/#{(0...32).map{(65+rand(26)).chr}.join.downcase}"
       end
       
       def anaconda_remove_previous_s3_files_on_change_or_destroy
