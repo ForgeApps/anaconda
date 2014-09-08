@@ -23,6 +23,6 @@ Gem::Specification.new do |s|
 
   s.add_dependency "jquery-fileupload-rails", "~> 0.4.1"
   s.add_dependency "javascript_dlog-rails", "~> 1.0.1"
-  s.add_dependency "simple_form", "3.0.2"
+  s.add_dependency "simple_form", ">= 3.0.2"
   s.add_dependency "fog", "~> 1.21"
 end
