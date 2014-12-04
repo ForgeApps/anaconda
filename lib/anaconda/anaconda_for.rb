@@ -39,6 +39,7 @@ module Anaconda
           base_key: "#{anaconda_column}_anaconda_default_base_key".to_sym,
           host: false,
           protocol: "http",
+          expiry_length: 1.hour,
           remove_previous_s3_files_on_change: true,
           remove_previous_s3_files_on_destroy: true
         )
@@ -117,10 +118,10 @@ module Anaconda
         options = args.extract_options!
         logger.debug "Extracted Options:"
         logger.debug(options)
-
+        
         if send("#{column_name}_stored_privately")
           aws = Fog::Storage.new({:provider => 'AWS', :aws_access_key_id => Anaconda.aws[:aws_access_key], :aws_secret_access_key => Anaconda.aws[:aws_secret_key], :path_style => Anaconda.aws[:path_style]})
-          aws.get_object_https_url(Anaconda.aws[:aws_bucket], send("#{column_name}_file_path"), 1.hour.from_now)
+          aws.get_object_https_url(Anaconda.aws[:aws_bucket], send("#{column_name}_file_path"), anaconda_expiry_length(column_name, options[:expires]))
         elsif self.anaconda_options[column_name.to_sym][:host]
           "#{anaconda_protocol(column_name, options[:protocol])}#{self.anaconda_options[column_name.to_sym][:host]}/#{send("#{column_name}_file_path")}"
         else
@@ -130,10 +131,13 @@ module Anaconda
       
       def anaconda_download_url(column_name)
         return nil unless send("#{column_name}_file_path").present?
+        options = args.extract_options!
+        logger.debug "Extracted Options:"
+        logger.debug(options)
         
-        options = {query: {"response-content-disposition" => "attachment;"}}
+        aws_options = {query: {"response-content-disposition" => "attachment;"}}
         aws = Fog::Storage.new({:provider => 'AWS', :aws_access_key_id => Anaconda.aws[:aws_access_key], :aws_secret_access_key => Anaconda.aws[:aws_secret_key], :path_style => Anaconda.aws[:path_style]})
-        aws.get_object_https_url(Anaconda.aws[:aws_bucket], send("#{column_name}_file_path"), 1.hour.from_now, options)
+        aws.get_object_https_url(Anaconda.aws[:aws_bucket], send("#{column_name}_file_path"), anaconda_expiry_length(column_name, options[:expires]), aws_options)
 
       end
       
@@ -145,6 +149,11 @@ module Anaconda
         else
           "#{self.anaconda_options[column_name.to_sym][:protocol]}://"
         end
+      end
+      
+      def anaconda_expiry_length(column_name, override = nil)
+        return override if override
+        self.anaconda_options[column_name.to_sym][:expiry_length].seconds.from_now
       end
       
       def anaconda_default_base_key_for(column_name)

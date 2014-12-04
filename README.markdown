@@ -134,8 +134,9 @@ We highly recommend the `figaro` gem [https://github.com/laserlemon/figaro](http
 	* `allowed_file_types` default: _all_
 	* `host` String. If specified, this will be used to access publically stored objects instead of the S3 bucket. Useful for CloudFront integration. Note: At this time privately stored objects will still be requested via S3. Default: _false_
 	* `protocol` `https`, `http`, or `:auto`. If `:auto`, `//` will be used as the protocol. Note: At this time, all privately stored objects are requested over https. Default: `http`
-  * `remove_previous_s3_files_on_change` Boolean. If true, files will be removed from S3 when a new file is uploaded. Default: `true`
-  * `remove_previous_s3_files_on_destroy` Boolean. If true, files will be removed from S3 when a record is destroyed. Default: `true`
+  	* `remove_previous_s3_files_on_change` Boolean. If true, files will be removed from S3 when a new file is uploaded. Default: `true`
+  	* `remove_previous_s3_files_on_destroy` Boolean. If true, files will be removed from S3 when a record is destroyed. Default: `true`
+  	* `expiry_length` - If supplied, this is the length in seconds that a signed URL is valid for. Default: `1.hour`
 
 *  Form setup
 
@@ -154,7 +155,7 @@ We highly recommend the `figaro` gem [https://github.com/laserlemon/figaro](http
 	* `upload_details_container` - An element id you would like the upload details located in. Defaults to `<resource>_<attribtue>_details`  ex: `post_media_asset_details`
 	* `auto_upload` - If set to true, upload will begin as soon as a file is selected. Default: *false*
 	* `auto_submit` - If set to true, form will submit automatically when upload is completed. Useful when mixed with `auto_upload: true`, especially if the file field is the only field on the form. Default: *true* when auto_upload is false; *false* when auto_upload is true.
-  * `base_key` - If supplied, this will be the base_key used for this upload
+  	* `base_key` - If supplied, this will be the base_key used for this upload
 
 *  Fields
 	
@@ -168,14 +169,30 @@ We highly recommend the `figaro` gem [https://github.com/laserlemon/figaro](http
     * :asset_url
     * :asset_download_url
     
-    The magic methods are asset_url and asset_download_url.
+    The magic methods are `asset_url` and `asset_download_url`.
     
-    `asset_url` will return a signed S3 URL if the file is stored with an ACL of `private` and will return a non-signed URL if the file is stored with public access.
+    `asset_url` will return a signed S3 URL if the file is stored with an ACL of `private` and will return a non-signed URL if the file is stored with public access.  This accepts a single optional hash argument with possible parameters `protocol` and `expires`.
     
-    You may pass an options hash to the `asset_url` magic method. At this time, the only supported option is :protocol. Example: `asset_url({protocol: 'http'})`  This will override the `protocol` option set in the model.
+    `asset_download_url` will return a signed S3 URL with content-disposition set to attachment so the file will be downloaded instead of opened in the browser. This accepts a single optional hash argument. The only supported parameter in this hash is `expires`.
     
-    `asset_download_url` will return a signed S3 URL with content-disposition set to attachment so the file will be downloaded instead of opened in the browser.
-
+    `protocol`, if specified here, will override the default value set in the model.  
+    `expires` is a DateTime object when a signed URL will be valid until. On a file stored publically, this has no effect.
+    
+    
+    Example usages:
+    	
+    	# Assuming the files are stored privately.
+    	
+    	asset_url(expires: 3.hours.from_now)
+    	# Generates a URL that is valid for 3 hours
+    	
+    	asset_url(protocol: "https", expires: 5.minutes.from_now)
+    	# Generates a URL that is valid for 5 minutes, and uses the https protocol
+    	
+    	asset_download_url(expires: 5.minutes.from_now)
+    	# Generates a URL that is valid for 5 minutes, and will cause the browser to download the object.
+    	# This is most useful for things like images that most browsers try to display.
+    
 ### Advanced Usage
 
 #### Events
@@ -202,6 +219,10 @@ If you return false to the following events it will prevent the default behavior
 From version 1.0.0 on we have used [Semantic Versioning](http://semver.org/).
 
 ## Changelog
+* 1.0.7 (unreleased)
+  * Add support for `expires` option in signed AWS URLs.
+  * Add option for setting default `expiry_length` for signed AWS URLs.
+
 * 1.0.6
   * Loosen dependency requirement on `simple_form`
   
