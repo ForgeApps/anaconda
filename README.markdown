@@ -2,7 +2,7 @@
 
 Dead simple direct-to-s3 file uploading for your rails app.
 
-Current Version: 1.0.4
+Current Version: 1.0.7
 
 ## Installation
 
