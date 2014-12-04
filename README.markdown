@@ -219,7 +219,7 @@ If you return false to the following events it will prevent the default behavior
 From version 1.0.0 on we have used [Semantic Versioning](http://semver.org/).
 
 ## Changelog
-* 1.0.7 (unreleased)
+* 1.0.7
   * Add support for `expires` option in signed AWS URLs.
   * Add option for setting default `expiry_length` for signed AWS URLs.
 
