@@ -72,7 +72,9 @@ class @AnacondaUploadManager
   all_uploads_completed: ->
     triggerEvent "anaconda:manager:all-uploads-completed", { form: @form }
     if !@upload_automatically || @submit_automatically
-      @form.submit()
+      setTimeout =>
+        @form.submit()
+      , 610
     else
       @enable_submit_button()  
       
