@@ -78,7 +78,7 @@ module Anaconda
           when :url
             anaconda_url(checking_column, *args)
           when :download_url
-            anaconda_download_url(checking_column)
+            anaconda_download_url(checking_column, *args)
           when :anaconda_default_base_key
             anaconda_default_base_key_for(checking_column)
           else
