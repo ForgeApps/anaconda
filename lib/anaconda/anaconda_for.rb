@@ -129,7 +129,7 @@ module Anaconda
         end
       end
       
-      def anaconda_download_url(column_name)
+      def anaconda_download_url(column_name, *args)
         return nil unless send("#{column_name}_file_path").present?
         options = args.extract_options!
         logger.debug "Extracted Options:"
