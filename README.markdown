@@ -219,6 +219,9 @@ If you return false to the following events it will prevent the default behavior
 From version 1.0.0 on we have used [Semantic Versioning](http://semver.org/).
 
 ## Changelog
+* 1.0.10
+  * Add 610ms delay after final file is uploaded before submitting the form. Some browsers stop all CSS transitions when the form is submitted and this was preventing the progress bar from reaching 100%. This allows it to reach 100% before submitting the form, so users don't get the impression that the file failed to fully upload.
+
 * 1.0.9
   * Fix _another_ bug breaking the `asset_download_url` method.
 
