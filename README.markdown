@@ -2,7 +2,7 @@
 
 Dead simple direct-to-s3 file uploading for your rails app.
 
-Current Version: 1.0.7
+Current Version: 1.0.8
 
 ## Installation
 
@@ -219,6 +219,9 @@ If you return false to the following events it will prevent the default behavior
 From version 1.0.0 on we have used [Semantic Versioning](http://semver.org/).
 
 ## Changelog
+* 1.0.8
+  * Fix bug breaking the `asset_download_url` method.
+  
 * 1.0.7
   * Add support for `expires` option in signed AWS URLs.
   * Add option for setting default `expiry_length` for signed AWS URLs.
