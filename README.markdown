@@ -2,7 +2,7 @@
 
 Dead simple direct-to-s3 file uploading for your rails app.
 
-Current Version: 1.0.8
+Current Version: 1.0.9
 
 ## Installation
 
@@ -219,7 +219,10 @@ If you return false to the following events it will prevent the default behavior
 From version 1.0.0 on we have used [Semantic Versioning](http://semver.org/).
 
 ## Changelog
-* 1.0.8
+* 1.0.9
+  * Fix _another_ bug breaking the `asset_download_url` method.
+
+* 1.0.8 (yanked)
   * Fix bug breaking the `asset_download_url` method.
   
 * 1.0.7
