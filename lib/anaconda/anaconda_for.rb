@@ -134,8 +134,12 @@ module Anaconda
         options = args.extract_options!
         logger.debug "Extracted Options:"
         logger.debug(options)
+        filename = nil
+        if options[:filename].present?
+          filename = "filename=#{options[:filename]}"
+        end
         
-        aws_options = {query: {"response-content-disposition" => "attachment;"}}
+        aws_options = {query: {"response-content-disposition" => "attachment;#{filename}"}}
         aws = Fog::Storage.new({:provider => 'AWS', :aws_access_key_id => Anaconda.aws[:aws_access_key], :aws_secret_access_key => Anaconda.aws[:aws_secret_key], :path_style => Anaconda.aws[:path_style]})
         aws.get_object_https_url(Anaconda.aws[:aws_bucket], send("#{column_name}_file_path"), anaconda_expiry_length(column_name, options[:expires]), aws_options)
 
