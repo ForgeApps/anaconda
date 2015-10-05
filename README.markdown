@@ -173,7 +173,7 @@ We highly recommend the `figaro` gem [https://github.com/laserlemon/figaro](http
     
     `asset_url` will return a signed S3 URL if the file is stored with an ACL of `private` and will return a non-signed URL if the file is stored with public access.  This accepts a single optional hash argument with possible parameters `protocol` and `expires`.
     
-    `asset_download_url` will return a signed S3 URL with content-disposition set to attachment so the file will be downloaded instead of opened in the browser. This accepts a single optional hash argument. The only supported parameter in this hash is `expires`.
+    `asset_download_url` will return a signed S3 URL with content-disposition set to attachment so the file will be downloaded instead of opened in the browser. This accepts a single optional hash argument. The currently supported parameters in this hash are `expires` and `filename`. `filename` is the name the file will be downloaded as.
     
     `protocol`, if specified here, will override the default value set in the model.  
     `expires` is a DateTime object when a signed URL will be valid until. On a file stored publically, this has no effect.
@@ -219,6 +219,9 @@ If you return false to the following events it will prevent the default behavior
 From version 1.0.0 on we have used [Semantic Versioning](http://semver.org/).
 
 ## Changelog
+* 1.0.11
+  * Add ability to pass `filename` to the `asset_download_url` method.
+
 * 1.0.10
   * Add 610ms delay after final file is uploaded before submitting the form. Some browsers stop all CSS transitions when the form is submitted and this was preventing the progress bar from reaching 100%. This allows it to reach 100% before submitting the form, so users don't get the impression that the file failed to fully upload.
 
