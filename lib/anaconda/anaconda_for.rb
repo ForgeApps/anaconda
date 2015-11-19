@@ -30,9 +30,11 @@ module Anaconda
         end
         self.anaconda_options = Hash.new unless self.anaconda_options.kind_of? Hash
         self.anaconda_options[anaconda_column.to_sym] = options.reverse_merge(
-          aws_access_key_id: Anaconda.aws[:aws_access_key],
-          aws_secret_access_key: Anaconda.aws[:aws_secret_key],
-          bucket: Anaconda.aws[:aws_bucket],
+          aws_access_key: Anaconda.aws[:aws_access_key],
+          aws_secret_key: Anaconda.aws[:aws_secret_key],
+          aws_bucket: Anaconda.aws[:aws_bucket],
+          aws_endpoint: Anaconda.aws[:aws_endpoint],
+          aws_use_path_style: Anaconda.aws[:path_style],
           acl: "public-read",
           max_file_size: 500.megabytes,
           allowed_file_types: [],
@@ -112,28 +114,46 @@ module Anaconda
         end
       end
 
+      def anaconda_options_for( anaconda_column )
+        if self.class.anaconda_columns.include? anaconda_column.to_sym
+          self.anaconda_options[anaconda_column].inject({}) do |hash, (k, v)|
+            if v.kind_of? Proc
+              hash[k] = self.instance_exec(&v)
+            else
+              hash[k] = v
+            end
+            hash
+          end
+        else
+          raise "#{anaconda_column} not configured for anaconda. Misspelling or did you forget to add the anaconda_for call for this field?"
+        end
+      end
+
       private
       def anaconda_url(column_name, *args)
         return nil unless send("#{column_name}_file_path").present?
         options = args.extract_options!
-        logger.debug "Extracted Options:"
+        options = options.reverse_merge(self.anaconda_options_for( column_name ))
+        logger.debug "Options:"
         logger.debug(options)
         
         if send("#{column_name}_stored_privately")
-          aws = Fog::Storage.new({:provider => 'AWS', :aws_access_key_id => Anaconda.aws[:aws_access_key], :aws_secret_access_key => Anaconda.aws[:aws_secret_key], :path_style => Anaconda.aws[:path_style]})
-          aws.get_object_https_url(Anaconda.aws[:aws_bucket], send("#{column_name}_file_path"), anaconda_expiry_length(column_name, options[:expires]))
-        elsif self.anaconda_options[column_name.to_sym][:host]
+          aws = Fog::Storage.new({:provider => 'AWS', :aws_access_key_id => options[:aws_access_key], :aws_secret_access_key => options[:aws_secret_key], :path_style => options[:aws_use_path_style]})
+          aws.get_object_https_url(options[:aws_bucket], send("#{column_name}_file_path"), anaconda_expiry_length(column_name, options[:expires]))
+        elsif options[:host]
           "#{anaconda_protocol(column_name, options[:protocol])}#{self.anaconda_options[column_name.to_sym][:host]}/#{send("#{column_name}_file_path")}"
         else
-          "#{anaconda_protocol(column_name, options[:protocol])}#{Anaconda.aws[:aws_endpoint]}/#{send("#{column_name}_file_path")}"
+          "#{anaconda_protocol(column_name, options[:protocol])}#{options[:aws_endpoint]}/#{send("#{column_name}_file_path")}"
         end
       end
       
       def anaconda_download_url(column_name, *args)
         return nil unless send("#{column_name}_file_path").present?
         options = args.extract_options!
-        logger.debug "Extracted Options:"
+        options = options.reverse_merge(self.anaconda_options_for( column_name ))
+        logger.debug "Options:"
         logger.debug(options)
+        
         filename = nil
         if options[:filename].present?
           logger.debug "Cleaned Filename: #{clean_filename}"
@@ -141,24 +161,25 @@ module Anaconda
         end
         
         aws_options = {query: {"response-content-disposition" => "attachment;#{filename}"}}
-        aws = Fog::Storage.new({:provider => 'AWS', :aws_access_key_id => Anaconda.aws[:aws_access_key], :aws_secret_access_key => Anaconda.aws[:aws_secret_key], :path_style => Anaconda.aws[:path_style]})
-        aws.get_object_https_url(Anaconda.aws[:aws_bucket], send("#{column_name}_file_path"), anaconda_expiry_length(column_name, options[:expires]), aws_options)
+        aws = Fog::Storage.new({:provider => 'AWS', :aws_access_key_id => options[:aws_access_key], :aws_secret_access_key => options[:aws_secret_key], :path_style => options[:aws_use_path_style]})
+        aws.get_object_https_url(options[:aws_bucket], send("#{column_name}_file_path"), anaconda_expiry_length(column_name, options[:expires]), aws_options)
 
       end
       
       def anaconda_protocol(column_name, override = nil)
         return override if override
-        case self.anaconda_options[column_name.to_sym][:protocol]
+        
+        case self.anaconda_options_for( column_name )[:protocol]
         when :auto
           "//"
         else
-          "#{self.anaconda_options[column_name.to_sym][:protocol]}://"
+          "#{self.anaconda_options_for( column_name )[:protocol]}://"
         end
       end
       
       def anaconda_expiry_length(column_name, override = nil)
         return override if override
-        self.anaconda_options[column_name.to_sym][:expiry_length].seconds.from_now
+        self.anaconda_options_for( column_name )[:expiry_length].seconds.from_now
       end
       
       def anaconda_default_base_key_for(column_name)
@@ -169,21 +190,21 @@ module Anaconda
         
         if self.destroyed?
           self.class.anaconda_columns.each do |column_name|
-            next unless self.anaconda_options[column_name.to_sym][:remove_previous_s3_files_on_destroy]
+            next unless self.anaconda_options_for( column_name )[:remove_previous_s3_files_on_destroy]
             if self.send("#{column_name}_file_path").present?
-              Anaconda.remove_s3_object_in_bucket_with_file_path(Anaconda.aws[:aws_bucket], self.send("#{column_name}_file_path"))
+              Anaconda.remove_s3_object(self.send("#{column_name}_file_path"), self.anaconda_options_for( column_name ))
             end
           end
         else
           self.class.anaconda_columns.each do |column_name|
-            next unless self.anaconda_options[column_name.to_sym][:remove_previous_s3_files_on_change]
+            next unless self.anaconda_options_for( column_name )[:remove_previous_s3_files_on_change]
             if self.previous_changes["#{column_name}_file_path"].present?
               # Looks like this field was edited.
               if self.previous_changes["#{column_name}_file_path"][0].present? &&
                 self.previous_changes["#{column_name}_file_path"][0] != self.previous_changes["#{column_name}_file_path"][1]
                 # It's not a new entry ([0] would be nil), and it really did change, wasn't just committed for no reason
                 # So let's delete the previous file from S3
-                Anaconda.remove_s3_object_in_bucket_with_file_path(Anaconda.aws[:aws_bucket], self.previous_changes["#{column_name}_file_path"][0])
+                Anaconda.remove_s3_object(self.previous_changes["#{column_name}_file_path"][0], self.anaconda_options_for( column_name ))
               end
             end
           end

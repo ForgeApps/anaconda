@@ -33,7 +33,11 @@ module Anaconda
     yield self
     
     @@aws[:aws_endpoint] = "s3.amazonaws.com/#{@@aws[:aws_bucket]}" unless @@aws[:aws_endpoint].present?
-    @@aws[:path_style] = !@@aws[:aws_endpoint].starts_with?(@@aws[:aws_bucket])
+    if @@aws[:aws_endpoint].present? && @@aws[:aws_bucket].present?
+      @@aws[:path_style] = !@@aws[:aws_endpoint].starts_with?(@@aws[:aws_bucket])
+    else
+      @@aws[:path_style] = false
+    end
   end
   
   def self.js_file_types
@@ -55,8 +59,8 @@ module Anaconda
     return js_file_types
   end
   
-  def self.remove_s3_object_in_bucket_with_file_path(bucket, file_path)
-    aws = Fog::Storage.new({:provider => 'AWS', :aws_access_key_id => Anaconda.aws[:aws_access_key], :aws_secret_access_key => Anaconda.aws[:aws_secret_key], :path_style => @@aws[:path_style]})
-    aws.delete_object(bucket, file_path)
+  def self.remove_s3_object(file_path, options)
+    aws = Fog::Storage.new({:provider => 'AWS', :aws_access_key_id => options[:aws_access_key], :aws_secret_access_key => options[:aws_secret_key], :path_style => options[:aws_use_path_style]})
+    aws.delete_object(options[:aws_bucket], file_path)
   end
 end
