@@ -219,6 +219,9 @@ If you return false to the following events it will prevent the default behavior
 From version 1.0.0 on we have used [Semantic Versioning](http://semver.org/).
 
 ## Changelog
+* 1.0.12
+  * Clean the `filename` that is passed to the `asset_download_url` method
+
 * 1.0.11
   * Add ability to pass `filename` to the `asset_download_url` method.
 
