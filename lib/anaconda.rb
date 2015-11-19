@@ -32,7 +32,10 @@ module Anaconda
   def self.config
     yield self
     
-    @@aws[:aws_endpoint] = "s3.amazonaws.com/#{@@aws[:aws_bucket]}" unless @@aws[:aws_endpoint].present?
+    if @@aws[:aws_bucket].present?
+      @@aws[:aws_endpoint] = "s3.amazonaws.com/#{@@aws[:aws_bucket]}" unless @@aws[:aws_endpoint].present?
+    end
+    
     if @@aws[:aws_endpoint].present? && @@aws[:aws_bucket].present?
       @@aws[:path_style] = !@@aws[:aws_endpoint].starts_with?(@@aws[:aws_bucket])
     else
