@@ -136,7 +136,8 @@ module Anaconda
         logger.debug(options)
         filename = nil
         if options[:filename].present?
-          filename = "filename=#{options[:filename]}"
+          logger.debug "Cleaned Filename: #{clean_filename}"
+          filename = "filename=#{clean_filename}"
         end
         
         aws_options = {query: {"response-content-disposition" => "attachment;#{filename}"}}
