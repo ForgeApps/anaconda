@@ -126,17 +126,20 @@ We highly recommend the `figaro` gem [https://github.com/laserlemon/figaro](http
 	
 	At this time the available options on anaconda_for are:
 	* `base_key` default: _%{plural model}/%{plural column}/%{random string}_
-	* `aws_access_key_id` default: _aws_access_key_ specified in Anaconda config
-	* `aws_secret_access_key` default: _aws_secret_key_ specified in Anaconda config
-	* `bucket` default: _aws_bucket_ specified in Anaconda config
+	* `aws_access_key` default: _aws_access_key_ specified in Anaconda config
+	* `aws_secret_key` default: _aws_secret_key_ specified in Anaconda config
+	* `aws_bucket` default: _aws_bucket_ specified in Anaconda config
+  * `aws_endpoint` default: _aws_endpoint_ specified in Anaconda config
 	* `acl` default _public-read_
 	* `max_file_size` default: `500.megabytes`
 	* `allowed_file_types` default: _all_
 	* `host` String. If specified, this will be used to access publically stored objects instead of the S3 bucket. Useful for CloudFront integration. Note: At this time privately stored objects will still be requested via S3. Default: _false_
 	* `protocol` `https`, `http`, or `:auto`. If `:auto`, `//` will be used as the protocol. Note: At this time, all privately stored objects are requested over https. Default: `http`
-  	* `remove_previous_s3_files_on_change` Boolean. If true, files will be removed from S3 when a new file is uploaded. Default: `true`
-  	* `remove_previous_s3_files_on_destroy` Boolean. If true, files will be removed from S3 when a record is destroyed. Default: `true`
-  	* `expiry_length` - If supplied, this is the length in seconds that a signed URL is valid for. Default: `1.hour`
+	* `remove_previous_s3_files_on_change` Boolean. If true, files will be removed from S3 when a new file is uploaded. Default: `true`
+	* `remove_previous_s3_files_on_destroy` Boolean. If true, files will be removed from S3 when a record is destroyed. Default: `true`
+	* `expiry_length` - If supplied, this is the length in seconds that a signed URL is valid for. Default: `1.hour`
+  
+  Any `anaconda_for` option may also be a proc that will be evaluated in the context of the current instance.
 
 *  Form setup
 
@@ -219,7 +222,11 @@ If you return false to the following events it will prevent the default behavior
 From version 1.0.0 on we have used [Semantic Versioning](http://semver.org/).
 
 ## Changelog
-* 1.0.12
+* 2.0.0
+  
+  *Breaking Changes!*
+  * The options you can pass to `anaconda_for` have changed.
+  * Add ability for `anaconda_for` options to be procs so we can have instance specific data there.
   * Clean the `filename` that is passed to the `asset_download_url` method
 
 * 1.0.11
