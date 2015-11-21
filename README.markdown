@@ -222,8 +222,11 @@ If you return false to the following events it will prevent the default behavior
 From version 1.0.0 on we have used [Semantic Versioning](http://semver.org/).
 
 ## Changelog
-* 2.0.0
+* 2.0.1
+  * Fix `asset_download_url` method
   
+* 2.0.0
+  YANKED
   *Breaking Changes!*
   * The options you can pass to `anaconda_for` have changed.
   * Add ability for `anaconda_for` options to be procs so we can have instance specific data there.

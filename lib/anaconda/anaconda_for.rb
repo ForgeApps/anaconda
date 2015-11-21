@@ -156,6 +156,7 @@ module Anaconda
         
         filename = nil
         if options[:filename].present?
+          clean_filename = options[:filename].gsub(/[^0-9A-Za-z.\-\ \(\)]/, '-')
           logger.debug "Cleaned Filename: #{clean_filename}"
           filename = "filename=#{clean_filename}"
         end
