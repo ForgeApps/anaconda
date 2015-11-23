@@ -168,7 +168,7 @@ module Anaconda
       end
       
       def anaconda_protocol(column_name, override = nil)
-        return override if override
+        return "#{override}://" if override
         
         case self.anaconda_options_for( column_name )[:protocol]
         when :auto
