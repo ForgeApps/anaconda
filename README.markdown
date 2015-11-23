@@ -222,7 +222,11 @@ If you return false to the following events it will prevent the default behavior
 From version 1.0.0 on we have used [Semantic Versioning](http://semver.org/).
 
 ## Changelog
+* 2.0.2
+  * Fix `asset_url` method. There's tests coming. I swear.
+
 * 2.0.1
+  YANKED
   * Fix `asset_download_url` method
   
 * 2.0.0
