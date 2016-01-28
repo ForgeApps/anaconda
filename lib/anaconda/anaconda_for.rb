@@ -168,9 +168,9 @@ module Anaconda
           aws = Fog::Storage.new({:provider => 'AWS', :aws_access_key_id => options[:aws_access_key], :aws_secret_access_key => options[:aws_secret_key], :path_style => options[:aws_use_path_style]})
           aws.get_object_https_url(options[:aws_bucket], send("#{column_name}_file_path"), anaconda_expiry_length(column_name, options[:expires]))
         elsif options[:host]
-          "#{anaconda_protocol(column_name, options[:protocol])}#{self.anaconda_options[column_name.to_sym][:host]}/#{send("#{column_name}_file_path")}"
+          "#{anaconda_protocol(column_name, options[:protocol]).gsub("://://", "://")}#{self.anaconda_options[column_name.to_sym][:host]}/#{send("#{column_name}_file_path")}"
         else
-          "#{anaconda_protocol(column_name, options[:protocol])}#{options[:aws_endpoint]}/#{send("#{column_name}_file_path")}"
+          "#{anaconda_protocol(column_name, options[:protocol]).gsub("://://", "://")}#{options[:aws_endpoint]}/#{send("#{column_name}_file_path")}"
         end
       end
       
