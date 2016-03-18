@@ -5,7 +5,8 @@ module Anaconda
         id: "fileupload",
         aws_access_key_id: Anaconda.aws[:aws_access_key],
         aws_secret_access_key: Anaconda.aws[:aws_secret_key],
-        bucket: Anaconda.aws[:aws_bucket],
+        aws_bucket: Anaconda.aws[:aws_bucket],
+        aws_endpoint: Anaconda.aws[:aws_endpoint],
         acl: "public-read",
         expiration: 10.hours.from_now.utc,
         max_file_size: 500.megabytes,
@@ -47,7 +48,7 @@ module Anaconda
     end
 
     def url
-      "https://#{Anaconda.aws[:aws_endpoint]}/"
+      "https://#{@options[:aws_endpoint]}/"
     end
 
     def policy
@@ -62,7 +63,7 @@ module Anaconda
           ["starts-with", "$key", base_key],
           ["starts-with", "$Content-Type", ""],
           ["content-length-range", 1, @options[:max_file_size]],
-          {bucket: @options[:bucket]},
+          {bucket: @options[:aws_bucket]},
           {acl: @options[:acl]}
         ]
       }
