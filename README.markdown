@@ -222,6 +222,9 @@ If you return false to the following events it will prevent the default behavior
 From version 1.0.0 on we have used [Semantic Versioning](http://semver.org/).
 
 ## Changelog
+* 2.1.2
+  * Fix bug causing files to upload to the wrong bucket if you overwrote `bucket` in the `anaconda_for` declaration.
+
 * 2.1.1
   * Handle passing "://" as part of the protocol in `asset_download_url` magic method
 
