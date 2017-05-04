@@ -21,7 +21,8 @@ Gem::Specification.new do |s|
   s.rubygems_version = "2.0.3"
   s.summary = "Dead simple file uploading to S3"
 
-  s.add_dependency "jquery-fileupload-rails", "~> 0.4.7"
-  s.add_dependency "javascript_dlog-rails", "~> 1.0.1"
-  s.add_dependency "fog-aws", "~> 1.21"
+  s.add_runtime_dependency "jquery-fileupload-rails", "~> 0.4.7"
+  s.add_runtime_dependency "javascript_dlog-rails", "~> 1.0.1"
+  s.add_runtime_dependency "aws-sdk", "~> 2"
+  s.add_development_dependency "rspec", '~> 3'
 end
