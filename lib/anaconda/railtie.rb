@@ -1,7 +1,6 @@
 require 'rails/railtie'
 require 'anaconda/form_builder_helpers'
-require 'simple_form'
-require 'fog'
+require 'aws-sdk'
 
 module Anaconda
   class Railtie < ::Rails::Railtie

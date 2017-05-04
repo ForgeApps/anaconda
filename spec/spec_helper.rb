@@ -18,6 +18,16 @@
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 
 require 'anaconda'
+require 'yaml'
+
+raise "You need to provide a aws-test-credentials.yml file in spec/. See the included sample file." unless File.exists?( File.join( "spec", "aws-test-credentials.yml" ) )
+
+aws_creds = YAML.load_file( File.join( "spec", "aws-test-credentials.yml" ) )
+
+ENV["AWS_ACCESS_KEY"] = aws_creds["access_key"]
+ENV["AWS_SECRET_KEY"] = aws_creds["secret_key"]
+ENV["AWS_BUCKET"]     = aws_creds["bucket_name"]
+ENV["AWS_ENDPOINT"]   = aws_creds["region"] 
 
 RSpec.configure do |config|
   # rspec-expectations config goes here. You can use an alternate

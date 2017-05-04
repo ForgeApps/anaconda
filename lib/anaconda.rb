@@ -6,6 +6,7 @@ require 'anaconda/railtie'
 require 'anaconda/s3_uploader'
 require 'anaconda/engine'
 require 'anaconda/version'
+require 'anaconda/aws_operations'
 
 ActiveSupport.on_load(:active_record) do
   include Anaconda::Model
@@ -23,7 +24,7 @@ module Anaconda
   @@file_types = {
     audio:    /(\.|\/)(wav|mp3|m4a|aiff|ogg|flac)$/,
     video:    /(\.|\/)(mp[e]?g|mov|avi|mp4|m4v)$/,
-    image:    /(\.|\/)(jp[e]?g|png|bmp)$/,
+    image:    /(\.|\/)(jp[e]?g|png|bmp|gif)$/,
     resource: /(\.|\/)(pdf|ppt[x]?|doc[x]?|xls[x]?)$/,
   }
 
@@ -63,7 +64,6 @@ module Anaconda
   end
   
   def self.remove_s3_object(file_path, options)
-    aws = Fog::Storage.new({:provider => 'AWS', :aws_access_key_id => options[:aws_access_key], :aws_secret_access_key => options[:aws_secret_key], :path_style => options[:aws_use_path_style]})
-    aws.delete_object(options[:aws_bucket], file_path)
+    Anaconda::AWSOperations.remove_s3_object( key: file_path, options: options )
   end
 end

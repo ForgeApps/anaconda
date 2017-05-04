@@ -188,10 +188,11 @@ module Anaconda
           filename = "filename=#{clean_filename}"
         end
         
-        aws_options = {query: {"response-content-disposition" => "attachment;#{filename}"}}
-        aws = Fog::Storage.new({:provider => 'AWS', :aws_access_key_id => options[:aws_access_key], :aws_secret_access_key => options[:aws_secret_key], :path_style => options[:aws_use_path_style]})
-        aws.get_object_https_url(options[:aws_bucket], send("#{column_name}_file_path"), anaconda_expiry_length(column_name, options[:expires]), aws_options)
-
+        key = send("#{column_name}_file_path")
+        options[:expires]  = anaconda_expiry_length(column_name, options[:expires])
+        options[:filename] = filename
+        
+        Anaconda::AWSOperations.public_url( key: key, options: options )
       end
       
       def anaconda_protocol(column_name, override = nil)
