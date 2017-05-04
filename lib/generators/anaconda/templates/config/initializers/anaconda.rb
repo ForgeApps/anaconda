@@ -9,7 +9,7 @@ Anaconda.config do |config|
   config.file_types = {
     audio:    /(\.|\/)(wav|mp3|m4a|aiff|ogg|flac)$/,
     video:    /(\.|\/)(mp[e]?g|mov|avi|mp4|m4v)$/,
-    image:    /(\.|\/)(jp[e]?g|png|bmp)$/,
+    image:    /(\.|\/)(jp[e]?g|png|bmp|gif)$/,
     resource: /(\.|\/)(pdf|ppt[x]?|doc[x]?|xls[x]?)$/,
   }
 end
