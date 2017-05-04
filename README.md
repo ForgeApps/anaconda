@@ -2,13 +2,15 @@
 
 Dead simple direct-to-s3 file uploading for your rails app.
 
-Current Version: 1.0.9
+## Requirements
+
+Rails 5+. For Rails 3 & 4, see the [Rails 4 Documentation](README-Rails-4.md)
 
 ## Installation
 
 1.  Add to your `Gemfile`
 
-        gem 'anaconda'
+        gem 'anaconda', '>= 5.0.0'
 
 2.  `bundle install`
 
@@ -299,5 +301,4 @@ See [changelog](CHANGELOG.md) for previous changes
 
 ## Copyright
 
-Copyright (c) 2014 Forge Apps, LLC. See LICENSE.txt for
-further details.
+Copyright (c) 2017 Forge Apps, LLC. See [LICENSE](LICENSE) for further details.

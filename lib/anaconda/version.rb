@@ -1,5 +1,5 @@
 module Anaconda
   module Rails
-    VERSION = "2.1.2"
+    VERSION = "5.0.0"
   end
 end
