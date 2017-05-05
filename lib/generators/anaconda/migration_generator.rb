@@ -19,7 +19,7 @@ module Anaconda
         migration_name = "AnacondaMigrationFor#{file_name.titlecase}#{field_name.titlecase}#{i}".gsub(" ", "")
       end
       create_file destination, <<-FILE
-class #{migration_name} < ActiveRecord::Migration
+class #{migration_name} < ActiveRecord::Migration[5.0]
   def change
     add_column :#{plural_name}, :#{field_name}_filename, :string
     add_column :#{plural_name}, :#{field_name}_file_path, :text
