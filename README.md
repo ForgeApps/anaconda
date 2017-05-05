@@ -31,6 +31,7 @@ Create a bucket where you want your uploads to go. If you already have a bucket 
 For best security we recommend creating a user in IAM that will just be used for file uploading. Once you create that user you can apply a security policy to it so they can only access the specified resources. Here is an example IAM policy that will restrict this user to only have access to the one bucket specified (be sure to replace 'your.bucketname'). Be sure to generate security credentials for this user. These are the S3 credentials you will use.
 
     {
+      "Version": "2012-10-17",
       "Statement": [
             {
               "Effect": "Allow",

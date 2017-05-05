@@ -8,6 +8,7 @@ module Anaconda
 
       element_id = "anaconda_file_#{anaconda_field_name}"
       output += "<div class='anaconda_dropzone'>"
+      
       if self.class == SimpleForm::FormBuilder
         instance = self.object
         a_class = self.object.class unless self.object.kind_of? Class
@@ -25,6 +26,31 @@ module Anaconda
         
         uploader = Anaconda::S3Uploader.new(options)
         output += self.input_field "file", name: "file", id: element_id, as: :file, data: {url: uploader.url, form_data: uploader.fields.to_json, media_types: Anaconda.js_file_types}
+      elsif self.class == ActionView::Helpers::FormBuilder
+        instance = self.object
+        a_class = self.object.class unless self.object.kind_of? Class
+
+        begin
+          options = a_class.anaconda_options[anaconda_field_name.to_sym].dup
+        rescue
+          raise AnacondaError, "attribute options not set for column #{anaconda_field_name}. Did you add `anaconda_for :#{anaconda_field_name}` to the model?"
+        end
+        
+        if options.nil?
+          raise AnacondaError, "attribute options not set for column #{anaconda_field_name}. Did you add `anaconda_for :#{anaconda_field_name}` to the model?"
+        end        
+        
+        ::Rails.logger.info "form_options: #{form_options}"
+        ::Rails.logger.info "options: #{options}"
+        
+        if form_options[:base_key]
+          options[:base_key] = form_options[:base_key]
+        else
+          options[:base_key] = instance.send(options[:base_key].to_s) if options[:base_key].kind_of? Symbol
+        end
+        
+        uploader = Anaconda::S3Uploader.new(options)
+        output += self.file_field "file", name: "file", id: element_id, data: {url: uploader.url, form_data: uploader.fields.to_json, media_types: Anaconda.js_file_types}
       end
 
       output += self.hidden_field "#{anaconda_field_name}_filename".to_sym, data: {"#{instance.class.to_s.underscore}_#{anaconda_field_name}_filename" => true}
