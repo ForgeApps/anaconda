@@ -33,6 +33,7 @@ module Anaconda
           aws_access_key: Anaconda.aws[:aws_access_key],
           aws_secret_key: Anaconda.aws[:aws_secret_key],
           aws_bucket: Anaconda.aws[:aws_bucket],
+          aws_region: Anaconda.aws[:aws_region],
           aws_endpoint: Anaconda.aws[:aws_endpoint],
           aws_use_path_style: Anaconda.aws[:path_style],
           acl: "public-read",
