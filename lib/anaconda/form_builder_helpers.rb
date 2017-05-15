@@ -9,7 +9,7 @@ module Anaconda
       element_id = "anaconda_file_#{anaconda_field_name}"
       output += "<div class='anaconda_dropzone'>"
       
-      if self.class == SimpleForm::FormBuilder
+      if defined?(SimpleForm) && self.class == SimpleForm::FormBuilder
         instance = self.object
         a_class = self.object.class unless self.object.kind_of? Class
 
