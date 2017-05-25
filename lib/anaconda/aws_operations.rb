@@ -29,8 +29,8 @@ module Anaconda
       puts "remove_s3_object"
       puts "options: #{options}"
       
-      s3 = Aws::S3::Client.new( { region: options[:region], credentials: Aws::Credentials.new( options[:access_key], options[:secret_key] ) } )
-      bucket = Aws::S3::Bucket.new( name: options[:bucket_name], client: s3 )
+      s3 = Aws::S3::Client.new( { region: options[:aws_region], credentials: Aws::Credentials.new( options[:aws_access_key], options[:aws_secret_key] ) } )
+      bucket = Aws::S3::Bucket.new( name: options[:aws_bucket], client: s3 )
       obj = bucket.object(key)
       obj.delete      
     end
