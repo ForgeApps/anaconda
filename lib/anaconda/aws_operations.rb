@@ -5,9 +5,8 @@ module Anaconda
     def self.public_url( key: "", options: {} )
       aws_options = {query: {"response-content-disposition" => "attachment;#{options[:filename]}"}}
       
-      s3 = Aws::S3::Client.new( { region: options[:region], credentials: Aws::Credentials.new( options[:access_key], options[:secret_key] ) } )
-      
-      bucket = Aws::S3::Bucket.new( name: options[:bucket_name], client: s3 )
+      s3 = Aws::S3::Client.new( { region: options[:aws_region], credentials: Aws::Credentials.new( options[:aws_access_key], options[:aws_secret_key] ) } )
+      bucket = Aws::S3::Bucket.new( name: options[:aws_bucket], client: s3 )
       
       if options[:expires].present?
         bucket.object(key).presigned_url( :get, expires_in: options[:expires], acl: 'public-read', query: {"response-content-disposition" => "attachment;#{options[:filename]}"} )
@@ -19,8 +18,8 @@ module Anaconda
     end
     
     def self.put_s3_object( key: "", data: nil, options: {} )
-      s3 = Aws::S3::Client.new( { region: options[:region], credentials: Aws::Credentials.new( options[:access_key], options[:secret_key] ) } )
-      bucket = Aws::S3::Bucket.new( name: options[:bucket_name], client: s3 )
+      s3 = Aws::S3::Client.new( { region: options[:aws_region], credentials: Aws::Credentials.new( options[:aws_access_key], options[:aws_secret_key] ) } )
+      bucket = Aws::S3::Bucket.new( name: options[:aws_bucket], client: s3 )
       obj = bucket.put_object({ key: key, body: data, acl: options[:acl] } )
     end
     

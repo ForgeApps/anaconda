@@ -135,16 +135,9 @@ module Anaconda
         logger.debug "Options:"
         logger.debug(options)
         
-        aws = Fog::Storage.new({:provider => 'AWS', :aws_access_key_id => options[:aws_access_key], :aws_secret_access_key => options[:aws_secret_key], :path_style => options[:aws_use_path_style]})
-        key = send(options[:base_key])
-
-        bucket = aws.directories.new(key: options[:aws_bucket])
         file_handle = open(file)
-        aws_file = bucket.files.create(
-          :key    => key,
-          :body   => file_handle,
-          :public => options[:acl] == "public-read"
-        )
+        key = send(options[:base_key])
+        Anaconda::AWSOperations.put_s3_object( key: key, data: file_handle, options: options )
         
         self.update_attributes(
           "#{column_name}_filename" => Pathname.new(file).basename,
@@ -154,7 +147,6 @@ module Anaconda
           "#{column_name}_stored_privately" => !(options[:acl] == "public-read"),
           "#{column_name}_type" => ""
         )
-
       end
 
       private
