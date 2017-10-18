@@ -9,7 +9,9 @@ module Anaconda
       bucket = Aws::S3::Bucket.new( name: options[:aws_bucket], client: s3 )
       
       if options[:expires].present?
-        bucket.object(key).presigned_url( :get, expires_in: options[:expires], acl: 'public-read', query: {"response-content-disposition" => "attachment;#{options[:filename]}"} )
+        # bucket.object(key).presigned_url( :get, expires_in: options[:expires], acl: 'public-read', query: {"response-content-disposition" => "attachment;#{options[:filename]}"} )
+        
+        bucket.object(key).presigned_url( :get, expires_in: options[:expires] )
       else
         bucket.object(key).public_url( query: {"response-content-disposition" => "attachment;#{options[:filename]}"} )
       end
