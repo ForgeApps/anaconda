@@ -182,7 +182,7 @@ module Anaconda
         end
         
         key = send("#{column_name}_file_path")
-        options[:expires]  = anaconda_expiry_length(column_name, options[:expires])
+        options[:expires]  = (anaconda_expiry_length(column_name, options[:expires])-Time.now).to_i
         options[:filename] = filename
         
         Anaconda::AWSOperations.public_url( key: key, options: options )
