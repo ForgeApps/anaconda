@@ -144,26 +144,31 @@ We highly recommend the `figaro` gem [https://github.com/laserlemon/figaro](http
 
 *  Form setup
 
-	Anaconda fields are supported inside of either a [simple_form](https://github.com/plataformatec/simple_form) form builder, or the default rails form builder.
+	 Anaconda fields are supported inside of either a [simple_form](https://github.com/plataformatec/simple_form) form builder, or the default rails form builder.
 	
-		= simple_form_for post_media do |f|
-			= f.anaconda :asset
-			= f.name
-			= f.other_field
-			= f.submit
-      
-  = form_with model: @post, class: "form" do |f|
-    = f.anaconda :file, auto_upload: true, auto_submit: true
+   **SimpleForm Builder:**
   
+	     = simple_form_for post_media do |f|
+			   = f.anaconda :asset
+			   = f.name
+			   = f.other_field
+			   = f.submit
+        
+
+   **Rails Form Builder:**
+  
+        = form_with model: @post, class: "form" do |f|
+          = f.anaconda :file, auto_upload: true, auto_submit: true
 			
-	**Form helper options**
+	 
+   **Form helper options**
 	
-	There are a variety of options available on the form helper. At this time they are:
+	 There are a variety of options available on the form helper. At this time they are:
 	
-	* `upload_details_container` - An element id you would like the upload details located in. Defaults to `<resource>_<attribtue>_details`  ex: `post_media_asset_details`
-	* `auto_upload` - If set to true, upload will begin as soon as a file is selected. Default: *false*
-	* `auto_submit` - If set to true, form will submit automatically when upload is completed. Useful when mixed with `auto_upload: true`, especially if the file field is the only field on the form. Default: *true* when auto_upload is false; *false* when auto_upload is true.
-  * `base_key` - If supplied, this will be the base_key used for this upload
+	 * `upload_details_container` - An element id you would like the upload details located in. Defaults to `<resource>_<attribtue>_details`  ex: `post_media_asset_details`
+	 * `auto_upload` - If set to true, upload will begin as soon as a file is selected. Default: *false*
+	 * `auto_submit` - If set to true, form will submit automatically when upload is completed. Useful when mixed with `auto_upload: true`, especially if the file field is the only field on the form. Default: *true* when auto_upload is false; *false* when auto_upload is true.
+   * `base_key` - If supplied, this will be the base_key used for this upload
 
 *  Fields
 	
