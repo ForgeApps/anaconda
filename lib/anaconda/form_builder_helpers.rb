@@ -6,7 +6,7 @@ module Anaconda
       instance = nil
       options = {}
 
-      element_id = "anaconda_file_#{anaconda_field_name}"
+      element_id = "anaconda_file_#{anaconda_field_name}_#{rand(999999999)}"
       output += "<div class='anaconda_dropzone'>"
       
       if defined?(SimpleForm) && defined?(SimpleForm::FormBuilder) && self.class == SimpleForm::FormBuilder
@@ -69,11 +69,12 @@ module Anaconda
       output += "</div>" #anaconda_dropzone
 
       options = options.merge(as: anaconda_field_name, form_options: form_options, element_id: element_id )
+      
       output += <<-END
 <div id="#{instance.class.to_s.underscore}_#{anaconda_field_name}_details"></div>
 <script>
   (function() {
-    window.uploader = new AnacondaUploadField({
+    new AnacondaUploadField({
       element_id: "##{options[:element_id]}",
       base_key: "#{options[:base_key]}",
       allowed_types: #{options[:allowed_file_types].collect{ |i| i.to_s }},
