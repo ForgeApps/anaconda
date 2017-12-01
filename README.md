@@ -74,7 +74,7 @@ We highly recommend the `figaro` gem [https://github.com/laserlemon/figaro](http
 
 *  Controller changes
   	
-  	You must add these parameters to your permitted parameters. In Rails 4 this is done via strong parameters in the controller. In Rails 3 this is done in the model via attr_accessible.
+  	You must add these parameters to your permitted parameters. In Rails 4+ this is done via strong parameters in the controller.
   	
   	We add two Class methods on the model that return an array of columns used by each anaconda_for column. One is scoped per anaconda field, and the other returns all of the columns anaconda needs for the entire model. This is useful if you have multiple anaconda columns in your model.
   	
@@ -92,9 +92,7 @@ We highly recommend the `figaro` gem [https://github.com/laserlemon/figaro](http
   		end
   	
   	This keeps your strong parameter list clean and dry. If you have multiple anaconda models in your model and you wish for all of the params for all of the models to be permitted, you may use `PostMedia.anaconda_fields_for_all_columns` instead.
-  	
-  	We have not tested if you can use `Model.anaconda_fields_for( column )` in the rails 3 attr_accessible list.
-  	
+  	  	
   	If you prefer to do this manually the fields this permit are listed below.
 
   	For each `anaconda_for` (assuming `anaconda_for :asset`):
@@ -146,13 +144,17 @@ We highly recommend the `figaro` gem [https://github.com/laserlemon/figaro](http
 
 *  Form setup
 
-	At this time we only support anaconda fields inside of a [simple_form](https://github.com/plataformatec/simple_form). We plan to expand and add a rails form helper in the future.
+	Anaconda fields are supported inside of either a [simple_form](https://github.com/plataformatec/simple_form) form builder, or the default rails form builder.
 	
 		= simple_form_for post_media do |f|
 			= f.anaconda :asset
 			= f.name
 			= f.other_field
 			= f.submit
+      
+  = form_with model: @post, class: "form" do |f|
+    = f.anaconda :file, auto_upload: true, auto_submit: true
+  
 			
 	**Form helper options**
 	
@@ -161,7 +163,7 @@ We highly recommend the `figaro` gem [https://github.com/laserlemon/figaro](http
 	* `upload_details_container` - An element id you would like the upload details located in. Defaults to `<resource>_<attribtue>_details`  ex: `post_media_asset_details`
 	* `auto_upload` - If set to true, upload will begin as soon as a file is selected. Default: *false*
 	* `auto_submit` - If set to true, form will submit automatically when upload is completed. Useful when mixed with `auto_upload: true`, especially if the file field is the only field on the form. Default: *true* when auto_upload is false; *false* when auto_upload is true.
-  	* `base_key` - If supplied, this will be the base_key used for this upload
+  * `base_key` - If supplied, this will be the base_key used for this upload
 
 *  Fields
 	
@@ -225,6 +227,19 @@ If you return false to the following events it will prevent the default behavior
 From version 1.0.0 on we have used [Semantic Versioning](http://semver.org/).
 
 ## Changelog
+
+* 5.0.3
+  * Fix bug where multiple anaconda forms on the same page would not properly display the upload progress in the right container.
+
+* 5.0.2
+  * Fix bug where multiple anaconda forms on the same page would not properly submit the right data to the controller.
+
+* 5.0.1
+  * Bugfix
+
+* 5.0.0
+  * Support Rails 5
+
 * 2.1.2
   * Fix bug causing files to upload to the wrong bucket if you overwrote `bucket` in the `anaconda_for` declaration.
 
