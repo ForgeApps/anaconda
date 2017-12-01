@@ -5,8 +5,10 @@ module Anaconda
       output = ""
       instance = nil
       options = {}
-
-      element_id = "anaconda_file_#{anaconda_field_name}_#{rand(999999999)}"
+      
+      # It would be safer if I could figure out how to make this sequential:
+      element_id = "anaconda_file_#{anaconda_field_name}_#{rand(999999999)}" 
+      
       output += "<div class='anaconda_dropzone'>"
       
       if defined?(SimpleForm) && defined?(SimpleForm::FormBuilder) && self.class == SimpleForm::FormBuilder
@@ -70,15 +72,17 @@ module Anaconda
 
       options = options.merge(as: anaconda_field_name, form_options: form_options, element_id: element_id )
       
+      upload_details_container_id = "#{instance.class.to_s.underscore}_#{anaconda_field_name}_details_#{rand(999999999)}"
+      
       output += <<-END
-<div id="#{instance.class.to_s.underscore}_#{anaconda_field_name}_details"></div>
+<div id="#{upload_details_container_id}"></div>
 <script>
   (function() {
     new AnacondaUploadField({
       element_id: "##{options[:element_id]}",
       base_key: "#{options[:base_key]}",
       allowed_types: #{options[:allowed_file_types].collect{ |i| i.to_s }},
-      upload_details_container: "#{options[:form_options][:upload_details_container]}",
+      upload_details_container: "#{upload_details_container_id}",
       upload_automatically: #{options[:form_options][:auto_upload] ||= false},
       submit_automatically: #{options[:form_options][:auto_submit] ||= false},
       resource: "#{instance.class.to_s.underscore}",
