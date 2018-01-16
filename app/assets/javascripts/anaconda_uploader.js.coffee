@@ -35,6 +35,7 @@ class @AnacondaUploadManager
   setup_form_submit_handler: ->
     DLog( "Setting up submit handler for form #{@form.attr('id')}")
     @form.on( 'submit', { self: this }, this.form_submit_handler )
+    @form.on( 'anaconda:submit', { self: this }, this.form_submit_handler )
 
   form_submit_handler: (e) ->
     self = e.data.self
@@ -72,9 +73,18 @@ class @AnacondaUploadManager
   all_uploads_completed: ->
     triggerEvent "anaconda:manager:all-uploads-completed", { form: @form }
     if !@upload_automatically || @submit_automatically
-      setTimeout =>
-        @form.submit()
-      , 610
+      
+      if @form.data( 'remote' ) == true
+        elem = @form[0]
+        
+        setTimeout =>
+          Rails.fire(elem, 'submit')
+        , 610
+          
+      else      
+        setTimeout =>
+          @form.submit()
+        , 610
     else
       @enable_submit_button()  
       
