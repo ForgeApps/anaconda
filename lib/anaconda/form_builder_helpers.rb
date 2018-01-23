@@ -11,6 +11,10 @@ module Anaconda
       
       output += "<div class='anaconda_dropzone'>"
       
+      if form_options[:dropzone_text].present?
+        output += "<div class='anaconda_dropzone_text'>#{form_options[:dropzone_text]}</div>"
+      end
+      
       if defined?(SimpleForm) && defined?(SimpleForm::FormBuilder) && self.class == SimpleForm::FormBuilder
         instance = self.object
         a_class = self.object.class unless self.object.kind_of? Class
@@ -75,7 +79,7 @@ module Anaconda
       upload_details_container_id = "#{instance.class.to_s.underscore}_#{anaconda_field_name}_details_#{rand(999999999)}"
       
       output += <<-END
-<div id="#{upload_details_container_id}"></div>
+<div id="#{upload_details_container_id}" class="anaconda_upload_details_container"></div>
 <script>
   (function() {
     new AnacondaUploadField({

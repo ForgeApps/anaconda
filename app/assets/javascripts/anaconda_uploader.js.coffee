@@ -97,6 +97,10 @@ class @AnacondaUploadManager
     $(document).bind 'drop dragover', (e) ->
       e.preventDefault()
       
+    $('.anaconda_dropzone').on 'click', (e) ->
+      DLog $(this).find( 'input[name=file]' )[0].click()
+      
+      
     $(document).bind 'dragover', (e) ->
       dropZone = $('.anaconda_dropzone')
       timeout = window.dropZoneTimeout
@@ -269,7 +273,7 @@ class @AnacondaUploadField
       
       
       DLog @file
-      @upload_details_container.html "<div id='upload_file_#{@get_id()}' class='upload-file #{@get_media_type(@file)}'><span class='file-name'>#{@file.name}</span>&nbsp;&nbsp;<span class='size'>#{@readable_size()}</span>&nbsp;&nbsp;<span class='progress-percent'></span><div class='progress'><span class='progress-bar'></span></div></div>"
+      @upload_details_container.html "<div id='upload_file_#{@get_id()}' class='upload-file #{@get_media_type(@file)}'>File: <span class='file-name'>#{@file.name}</span>&nbsp;&nbsp;Size: <span class='size'>#{@readable_size()}</span>&nbsp;&nbsp;<span class='progress-percent'></span><div class='progress'><span class='progress-bar'></span></div></div>"
 
       if @upload_automatically
         DLog "auto upload"
