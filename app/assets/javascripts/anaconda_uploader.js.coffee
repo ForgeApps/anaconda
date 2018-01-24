@@ -78,10 +78,12 @@ class @AnacondaUploadManager
         elem = @form[0]
         
         if typeof Rails != 'undefined'
+          # DLog "Rails was defined"
           setTimeout =>
             Rails.fire(elem, 'submit')
           , 610
         else
+          # DLog "Rails was NOT defined!"
           setTimeout =>
             @form.submit()
           , 610
