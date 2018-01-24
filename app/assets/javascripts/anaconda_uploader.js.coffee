@@ -77,9 +77,14 @@ class @AnacondaUploadManager
       if @form.data( 'remote' ) == true
         elem = @form[0]
         
-        setTimeout =>
-          Rails.fire(elem, 'submit')
-        , 610
+        if typeof Rails != 'undefined'
+          setTimeout =>
+            Rails.fire(elem, 'submit')
+          , 610
+        else
+          setTimeout =>
+            @form.submit()
+          , 610
           
       else      
         setTimeout =>
@@ -97,9 +102,8 @@ class @AnacondaUploadManager
     $(document).bind 'drop dragover', (e) ->
       e.preventDefault()
       
-    $('.anaconda_dropzone').on 'click', (e) ->
-      DLog $(this).find( 'input[name=file]' )[0].click()
-      
+    @form.find( '.anaconda_dropzone' ).on 'click', (e) ->
+      $(this).find( 'input[name=file]' )[0].click()
       
     $(document).bind 'dragover', (e) ->
       dropZone = $('.anaconda_dropzone')
