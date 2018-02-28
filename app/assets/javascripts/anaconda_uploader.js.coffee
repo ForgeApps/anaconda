@@ -17,8 +17,13 @@ class @AnacondaUploadManager
     @setup_form_submit_handler()
     @bind_dropzone_effects()
     self = this
+    
     $(document).on "page:fetch", ->
       DLog "page:fetch"
+      self.reset()
+    
+    $(document).on "anaconda:reset", ->
+      DLog "anaconda:reset"
       self.reset()
     
   register_upload_field: (anaconda_upload_field)->
@@ -61,6 +66,7 @@ class @AnacondaUploadManager
     return all_completed
   
   upload_completed: ->
+    DLog 'anaconda:manager:upload-completed'
     triggerEvent "anaconda:manager:upload-completed", { form: @form }
     all_completed = true
     for upload_field, i in @anaconda_upload_fields
@@ -71,28 +77,39 @@ class @AnacondaUploadManager
       @all_uploads_completed()
       
   all_uploads_completed: ->
+    DLog 'anaconda:manager:all-uploads-completed'
     triggerEvent "anaconda:manager:all-uploads-completed", { form: @form }
     if !@upload_automatically || @submit_automatically
+      DLog 'auto-upload is on'
       
       if @form.data( 'remote' ) == true
         elem = @form[0]
         
         if typeof Rails != 'undefined'
-          # DLog "Rails was defined"
+          DLog "Rails was defined"
+          DLog "Elem: "
+          DLog elem
+          
+          evt = new CustomEvent("anaconda:submitting")
+          
           setTimeout =>
-            Rails.fire(elem, 'submit')
+            # DLog 'Firing the remote submit call now'
+            # Rails.fire(elem, 'submit')
+            Rails.handleRemote.call(elem, evt)
           , 610
         else
-          # DLog "Rails was NOT defined!"
+          DLog "Rails was NOT defined!"
           setTimeout =>
             @form.submit()
           , 610
           
       else      
+        DLog 'submitting non remote form'
         setTimeout =>
           @form.submit()
         , 610
     else
+      DLog 'auto-upload is off'
       @enable_submit_button()  
       
   disable_submit_button: ->
