@@ -17,15 +17,15 @@ class @AnacondaUploadManager
     @setup_form_submit_handler()
     @bind_dropzone_effects()
     self = this
-    
+
     $(document).on "page:fetch", ->
       DLog "page:fetch"
       self.reset()
-    
+
     $(document).on "anaconda:reset", ->
       DLog "anaconda:reset"
       self.reset()
-    
+
   register_upload_field: (anaconda_upload_field)->
     DLog "Registering Upload Field"
     triggerEvent "anaconda:manager:upload-field-registered", { uploadField: anaconda_upload_field, resource: "#{anaconda_upload_field.hyphenated_resource}-#{anaconda_upload_field.hyphenated_attribute}" }
@@ -36,7 +36,7 @@ class @AnacondaUploadManager
     if anaconda_upload_field.submit_automatically
       # If _any_ of them have auto submit enabled, we will submit automatically
       @submit_automatically = true
-      
+
   setup_form_submit_handler: ->
     DLog( "Setting up submit handler for form #{@form.attr('id')}")
     @form.on( 'submit', { self: this }, this.form_submit_handler )
@@ -56,7 +56,7 @@ class @AnacondaUploadManager
     for upload_field, i in @anaconda_upload_fields
       upload_field.reset()
     @anaconda_upload_fields = []
-  
+
   all_uploads_are_complete: ->
     all_completed = true
     for upload_field, i in @anaconda_upload_fields
@@ -64,7 +64,7 @@ class @AnacondaUploadManager
         all_completed = false
         break
     return all_completed
-  
+
   upload_completed: ->
     DLog 'anaconda:manager:upload-completed'
     triggerEvent "anaconda:manager:upload-completed", { form: @form }
@@ -75,55 +75,55 @@ class @AnacondaUploadManager
         break
     if all_completed
       @all_uploads_completed()
-      
+
   all_uploads_completed: ->
     DLog 'anaconda:manager:all-uploads-completed'
     triggerEvent "anaconda:manager:all-uploads-completed", { form: @form }
     if !@upload_automatically || @submit_automatically
       DLog 'auto-upload is on'
-      
+
       if @form.data( 'remote' ) == true
         elem = @form[0]
-        
+
         if typeof Rails != 'undefined'
           DLog "Rails was defined"
           DLog "Elem: "
           DLog elem
-          
+
           evt = new CustomEvent("anaconda:submitting")
-          
+
           setTimeout =>
             # DLog 'Firing the remote submit call now'
-            # Rails.fire(elem, 'submit')
-            Rails.handleRemote.call(elem, evt)
+            Rails.fire(elem, 'submit')
+            # Rails.handleRemote.call(elem, evt)
           , 610
         else
           DLog "Rails was NOT defined!"
           setTimeout =>
             @form.submit()
           , 610
-          
-      else      
+
+      else
         DLog 'submitting non remote form'
         setTimeout =>
           @form.submit()
         , 610
     else
       DLog 'auto-upload is off'
-      @enable_submit_button()  
-      
+      @enable_submit_button()
+
   disable_submit_button: ->
     @form.find("input[type='submit']").prop( "disabled", true );
   enable_submit_button: ->
     @form.find("input[type='submit']").prop( "disabled", false );
-    
+
   bind_dropzone_effects: ->
     $(document).bind 'drop dragover', (e) ->
       e.preventDefault()
-      
+
     @form.find( '.anaconda_dropzone' ).on 'click', (e) ->
       $(this).find( 'input[name=file]' )[0].click()
-      
+
     $(document).bind 'dragover', (e) ->
       dropZone = $('.anaconda_dropzone')
       timeout = window.dropZoneTimeout
@@ -131,16 +131,16 @@ class @AnacondaUploadManager
         dropZone.addClass('in');
       else
         clearTimeout(timeout);
-        
+
       found = false
       node = e.target
-      
+
       while node != null
         if node in dropZone
             found = true
             break
           node = node.parentNode;
-      
+
       if found
         dropZone.addClass('hover')
       else
@@ -149,9 +149,9 @@ class @AnacondaUploadManager
       window.dropZoneTimeout = setTimeout ->
         window.dropZoneTimeout = null
         dropZone.removeClass('in hover')
-      , 100    
+      , 100
 
-class @AnacondaUploadField  
+class @AnacondaUploadField
   constructor: (options = {}) ->
     @upload_in_progress = false
     @upload_completed = false
@@ -175,12 +175,12 @@ class @AnacondaUploadField
     @file_data = null
     @media_types = $(@element_id).data('media-types')
     @acl = $(@element_id).data('form-data').acl
-    
+
     @base_key = options.base_key ? ""
     @key = options.key ? "#{@base_key}/${filename}"
-    
+
     @register_with_upload_manager()
-    
+
     @setup_fileupload()
     @bind_remove_button()
 
@@ -190,23 +190,23 @@ class @AnacondaUploadField
       DLog "Generating a random form ID"
       random_form_id = "form-#{Math.random().toString(36).substring(7)}"
       @closest_form().attr('id', random_form_id )
-    
+
     if (@closest_form().length == 0 || @closest_form().attr('id') == 'undefined' || @closest_form().attr('id') == undefined)
       throw "Anaconda Error: form element not found or missing id attribute."
     if (typeof( window.anacondaUploadManagers ) == "undefined")
       window.anacondaUploadManagers = []
     if (typeof( window.anacondaUploadManagers[@closest_form().attr('id')] ) == "undefined")
       DLog "registering new upload manager for form #{@closest_form().attr('id')}"
-      
-      
-      
+
+
+
       window.anacondaUploadManagers[@closest_form().attr('id')] = new AnacondaUploadManager({form_id: @closest_form().attr('id')})
-    @upload_manager().register_upload_field(this)  
+    @upload_manager().register_upload_field(this)
   upload_manager: ->
     window.anacondaUploadManagers[@closest_form().attr('id')]
   closest_form: ->
     $(@element_id).closest("form")
-  
+
   setup_fileupload: ->
     self = this
     $( @element_id ).fileupload
@@ -236,12 +236,12 @@ class @AnacondaUploadField
         DLog(data.textStatus )
         DLog("data.jqXHR:")
         DLog(data.jqXHR )
-  
+
   bind_remove_button: ->
     $("a[data-remove-#{@hyphenated_resource}-#{@hyphenated_attribute}]").click (e) =>
       e.preventDefault()
       @remove_file()
-  
+
   upload: ->
     return if @upload_completed
     if @file != null && @file_data != null
@@ -255,13 +255,13 @@ class @AnacondaUploadField
 
   hide_file_field: ->
     $(@element_id).hide()
-  
+
   is_allowed_type: (file_obj) ->
-    
+
     if 0 == @allowed_types.length || 0 <= @allowed_types.indexOf @get_media_type(file_obj)
       return true
     return false
-  
+
   get_media_type: (file_obj) ->
     media_type = "unknown"
     DLog "get_media_type"
@@ -270,10 +270,10 @@ class @AnacondaUploadField
       if regexp.test(file_obj.type) || regexp.test(file_obj.name)
         media_type = k
     return media_type
-    
+
   reset: ->
     @upload_details_container.html ''
-    
+
   stored_privately: ->
     if @acl == "private"
       true
@@ -287,14 +287,14 @@ class @AnacondaUploadField
       @file = data.files[0]
       @file_data = data
       @set_content_type()
-      
+
       triggerEvent "anaconda:valid-file-selected", { file: data.files[0], resource: "#{@hyphenated_resource}-#{@hyphenated_attribute}" }
-      
+
       # This remove button is for removing an already uploaded file,
       # not removing the just selected file. Let's not confuse people.
       $("a[data-remove-#{@hyphenated_resource}-#{@hyphenated_attribute}]").hide()
-      
-      
+
+
       DLog @file
       @upload_details_container.html "<div id='upload_file_#{@get_id()}' class='upload-file #{@get_media_type(@file)}'>File: <span class='file-name'>#{@file.name}</span>&nbsp;&nbsp;Size: <span class='size'>#{@readable_size()}</span>&nbsp;&nbsp;<span class='progress-percent'></span><div class='progress'><span class='progress-bar'></span></div></div>"
 
@@ -306,18 +306,18 @@ class @AnacondaUploadField
     else
       if triggerEvent "anaconda:invalid-file-selected", { file: data.files[0], resource: "#{@hyphenated_resource}-#{@hyphenated_attribute}" }
         alert "#{data.files[0].name} is a #{@get_media_type(data.files[0])} file. Only #{@allowed_types.join(", ")} files are allowed."
-      
+
   set_content_type: ->
     form_data = $(@element_id).data('form-data')
     form_data["Content-Type"] = @file.type
-    
+
     $( @element_id ).fileupload(
       formData: form_data
     )
-    
+
   get_id: ->
     hex_md5( "#{@file.name} #{@file.size}" )
-  
+
   readable_size: ->
     i = -1;
     byteUnits = [' kB', ' MB', ' GB', ' TB', 'PB', 'EB', 'ZB', 'YB'];
@@ -328,11 +328,11 @@ class @AnacondaUploadField
       break unless fileSizeInBytes > 1024
 
     Math.max(fileSizeInBytes, 0.1).toFixed(1) + byteUnits[i];
-  
+
   update_progress_to: (progress) ->
     @upload_details_container.find(".progress-percent").html progress + '%'
     @upload_details_container.find('.progress-bar').css('width', progress + '%')
-  
+
   file_completed_upload: (data) ->
     triggerEvent "anaconda:file-upload-completed", { file: @file, resource: "#{@hyphenated_resource}-#{@hyphenated_attribute}" }
     DLog "#{@file.name} completed uploading"
@@ -348,7 +348,7 @@ class @AnacondaUploadField
     @upload_in_progress = false;
     @upload_completed = true;
     @upload_manager().upload_completed()
-    
+
   remove_file: ->
     triggerEvent "anaconda:remove-file", { resource: "#{@hyphenated_resource}-#{@hyphenated_attribute}" }
     $("a[data-remove-#{@hyphenated_resource}-#{@hyphenated_attribute}]").hide()
