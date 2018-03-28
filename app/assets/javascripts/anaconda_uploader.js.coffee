@@ -296,7 +296,7 @@ class @AnacondaUploadField
 
 
       DLog @file
-      @upload_details_container.html "<div id='upload_file_#{@get_id()}' class='upload-file #{@get_media_type(@file)}'>File: <span class='file-name'>#{@file.name}</span>&nbsp;&nbsp;Size: <span class='size'>#{@readable_size()}</span>&nbsp;&nbsp;<span class='progress-percent'></span><div class='progress'><span class='progress-bar'></span></div></div>"
+      @upload_details_container.html "<div id='upload_file_#{@get_id()}' class='upload-file #{@get_media_type(@file)}'><div class='upload-metadata'>File: <span class='file-name'>#{@file.name}</span>&nbsp;&nbsp;Size: <span class='size'>#{@readable_size()}</span>&nbsp;&nbsp;<span class='progress-percent'></span></div><div class='progress'><span class='progress-bar'></span></div></div>"
 
       if @upload_automatically
         DLog "auto upload"
