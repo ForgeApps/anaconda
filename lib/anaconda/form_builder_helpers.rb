@@ -9,7 +9,7 @@ module Anaconda
       # It would be safer if I could figure out how to make this sequential:
       element_id = "anaconda_file_#{anaconda_field_name}_#{rand(999999999)}" 
       
-      output += "<div class='anaconda_dropzone'>"
+      output += "<div class='not_anaconda_dropzone'>"
       
       if form_options[:dropzone_text].present?
         output += "<div class='anaconda_dropzone_text'>#{form_options[:dropzone_text]}</div>"
@@ -81,18 +81,20 @@ module Anaconda
       output += <<-END
 <div id="#{upload_details_container_id}" class="anaconda_upload_details_container"></div>
 <script>
-  (function() {
-    new AnacondaUploadField({
-      element_id: "##{options[:element_id]}",
-      base_key: "#{options[:base_key]}",
-      allowed_types: #{options[:allowed_file_types].collect{ |i| i.to_s }},
-      upload_details_container: "#{upload_details_container_id}",
-      upload_automatically: #{options[:form_options][:auto_upload] ||= false},
-      submit_automatically: #{options[:form_options][:auto_submit] ||= false},
-      resource: "#{instance.class.to_s.underscore}",
-      attribute: "#{options[:as]}"
+  document.addEventListener("DOMContentLoaded", function() {
+    (function() {
+      new AnacondaUploadField({
+        element_id: "##{options[:element_id]}",
+        base_key: "#{options[:base_key]}",
+        allowed_types: #{options[:allowed_file_types].collect{ |i| i.to_s }},
+        upload_details_container: "#{upload_details_container_id}",
+        upload_automatically: #{options[:form_options][:auto_upload] ||= false},
+        submit_automatically: #{options[:form_options][:auto_submit] ||= false},
+        resource: "#{instance.class.to_s.underscore}",
+        attribute: "#{options[:as]}"
+      });
+    }).call(this);
     });
-  }).call(this);
 </script>
 
       END

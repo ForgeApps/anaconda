@@ -28,6 +28,8 @@ class @AnacondaUploadManager
 
   register_upload_field: (anaconda_upload_field)->
     DLog "Registering Upload Field"
+    DLog anaconda_upload_field
+    
     triggerEvent "anaconda:manager:upload-field-registered", { uploadField: anaconda_upload_field, resource: "#{anaconda_upload_field.hyphenated_resource}-#{anaconda_upload_field.hyphenated_attribute}" }
     @anaconda_upload_fields.push anaconda_upload_field
     if anaconda_upload_field.upload_automatically
@@ -93,8 +95,10 @@ class @AnacondaUploadManager
           evt = new CustomEvent("anaconda:submitting")
 
           setTimeout =>
-            # DLog 'Firing the remote submit call now'
-            Rails.fire(elem, 'submit')
+            DLog 'Firing the remote submit call now'
+            # Rails.fire(elem, 'submit')
+            elem.dispatchEvent(new Event('submit', {bubbles: true}));
+            
             # Rails.handleRemote.call(elem, evt)
           , 610
         else
@@ -113,8 +117,10 @@ class @AnacondaUploadManager
       @enable_submit_button()
 
   disable_submit_button: ->
+    DLog 'disable_submit_button'
     @form.find("input[type='submit']").prop( "disabled", true );
   enable_submit_button: ->
+    DLog 'enable_submit_button'
     @form.find("input[type='submit']").prop( "disabled", false );
 
   bind_dropzone_effects: ->
@@ -181,10 +187,13 @@ class @AnacondaUploadField
 
     @register_with_upload_manager()
 
+    DLog "Should call setup_fileupload now"
     @setup_fileupload()
     @bind_remove_button()
 
   register_with_upload_manager: ->
+    DLog "register_with_upload_manager: #{@element_id}"
+    
     # Generate a random form id if one does not exist
     if @closest_form().attr('id') == undefined
       DLog "Generating a random form ID"
@@ -197,22 +206,31 @@ class @AnacondaUploadField
       window.anacondaUploadManagers = []
     if (typeof( window.anacondaUploadManagers[@closest_form().attr('id')] ) == "undefined")
       DLog "registering new upload manager for form #{@closest_form().attr('id')}"
-
-
-
       window.anacondaUploadManagers[@closest_form().attr('id')] = new AnacondaUploadManager({form_id: @closest_form().attr('id')})
+
+    
+    DLog "Will now actually register with the upload manager"
+    DLog @upload_manager()
     @upload_manager().register_upload_field(this)
+    DLog "after"
+    DLog @upload_manager()
+
   upload_manager: ->
     window.anacondaUploadManagers[@closest_form().attr('id')]
+
   closest_form: ->
     $(@element_id).closest("form")
 
   setup_fileupload: ->
+    DLog "setup_fileupload for #{@element_id}"
+    
     self = this
     $( @element_id ).fileupload
-      dropZone: $( @element_id ).parent(".anaconda_dropzone"),
+      
       add: (e, data) ->
+        DLog "file added"
         self.file_selected data
+      
       progress: (e, data) ->
         DLog data
         progress = parseInt(data.loaded / data.total * 100, 10)
@@ -220,6 +238,7 @@ class @AnacondaUploadField
         self.update_progress_to(progress)
 
       done: (e, data) ->
+        DLog "file upload done"
         self.update_progress_to(100)
         self.file_completed_upload data
 
@@ -236,6 +255,8 @@ class @AnacondaUploadField
         DLog(data.textStatus )
         DLog("data.jqXHR:")
         DLog(data.jqXHR )
+        
+      dropZone: $( @element_id ).parent(".anaconda_dropzone")
 
   bind_remove_button: ->
     $("a[data-remove-#{@hyphenated_resource}-#{@hyphenated_attribute}]").click (e) =>
